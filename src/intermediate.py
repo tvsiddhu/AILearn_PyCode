@@ -416,4 +416,3 @@ print(cars.iloc[:, [2]])
 # Print out cars_per_cap and drives_right as DataFrame
 print(cars.loc[:, ['cars_per_cap', 'drives_right']])
 print(cars.iloc[:, [1, 2]])
-
