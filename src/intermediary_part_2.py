@@ -123,3 +123,104 @@ print(car_maniac)
 
 medium = cars[np.logical_and(cars['cars_per_cap'] > 100, cars['cars_per_cap'] < 500)]
 print(medium)
+
+# Loops
+
+# Initialize offset
+offset = 8
+while offset != 0:
+    print("correcting...")
+    offset = offset - 1
+    print(offset)
+
+# Initialize offset
+offset = -6
+
+# Code the while loop
+while offset != 0:
+    print("correcting...")
+    if offset > 0:
+        offset = offset - 1
+    else:
+        offset = offset + 1
+    print(offset)
+
+    # For Loops
+
+    # areas list
+areas = [11.25, 18.0, 20.0, 10.75, 9.50]
+
+# Code the for loop
+for area in areas:
+    print(area)
+
+# Indexes and values
+# areas list
+areas = [11.25, 18.0, 20.0, 10.75, 9.50]
+
+# Change for loop to use enumerate()
+for index, area in enumerate(areas):
+    print("room " + str(index+1) + ": " + str(area))
+
+# Loop over list of lists
+# house list of lists
+house = [["hallway", 11.25],
+         ["kitchen", 18.0],
+         ["living room", 20.0],
+         ["bedroom", 10.75],
+         ["bathroom", 9.50]]
+
+# Build a for loop from scratch
+for room in house:
+    print("the " + room[0] + " is " + str(room[1]) + " sqm")
+
+# Loop over dictionary
+# Definition of dictionary
+europe = {'spain': 'madrid', 'france': 'paris', 'germany': 'berlin',
+          'norway': 'oslo', 'italy': 'rome', 'poland': 'warsaw', 'austria': 'vienna'}
+
+# Iterate over europe
+for key, value in europe.items():
+    print("the capital of " + key + " is " + value)
+
+# Loop over Numpy array
+# Import numpy as np
+
+baseball = pd.read_csv("../data/baseball.csv")[['Height', 'Weight']].to_numpy().tolist()
+np_baseball = np.array(baseball)
+
+np_height = np_baseball[:, 0]
+
+# For loop over np_height
+for height in np_height:
+    print(str(height) + " inches")
+
+# For loop over np_baseball
+for baseball in np.nditer(np_baseball):
+    print(baseball)
+
+# Import cars data
+cars = pd.read_csv('../data/cars.csv', index_col=0)
+
+# Iterate over rows of cars
+for lab, row in cars.iterrows():
+    print(lab)
+    print(row)
+
+# Adapt for loop
+for lab, row in cars.iterrows():
+    print(lab + ": " + str(row['cars_per_cap']))
+
+# Use a for loop to add a new column, named COUNTRY, that contains a uppercase version of the country names in the
+# "country" column. You can use the string method upper() for this.
+
+# Code for loop that adds COUNTRY column
+for lab, row in cars.iterrows():
+    cars.loc[lab, "COUNTRY"] = row['country'].upper()
+
+# Replace the for loop with a one-liner that uses .apply(str.upper). The call should give the same result: a column
+# COUNTRY should be added to cars, containing an uppercase version of the country names.
+# Use the .apply(str.upper) method on cars["country"] and store the result in the column "COUNTRY".
+
+cars["COUNTRY"] = cars["country"].apply(str.upper)
+print(cars)
