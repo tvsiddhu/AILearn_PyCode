@@ -8,7 +8,7 @@ import pandas as pd
 # horizontal axis, pop on the vertical axis. Don't forget to finish off with the plt.show() function to actually
 # display the plot.
 
-wbank = pd.read_csv("../data/gapminder.csv")
+wbank = pd.read_csv("../../data/learning_python_sources/gapminder.csv")
 
 year = wbank['country'].tolist()
 pop = wbank['population'].tolist()
@@ -31,7 +31,7 @@ gdp_cap = wbank['gdp_cap'].tolist()
 life_exp = wbank['life_exp'].tolist()
 cont = wbank['cont'].tolist()
 # read the life expectancy data for the year 1950
-lexp = pd.read_csv("../data/life_expectancy.csv")
+lexp = pd.read_csv("../../data/learning_python_sources/life_expectancy.csv")
 life_exp1950 = lexp['1950'].tolist()
 
 # Print the last item of gdp_cap and life_exp
@@ -353,7 +353,7 @@ print(cars)
 # Specify the index_col argument inside pd.read_csv(): set it to 0, so that the first column is used as row labels.
 # Has the printout of cars improved now?
 
-cars = pd.read_csv("../data/cars.csv", index_col=0)
+cars = pd.read_csv("../../data/learning_python_sources/cars.csv", index_col=0)
 print(cars)
 # Use single square brackets to print out the country column of cars as a Pandas Series. Use double square brackets
 # to print out the country column of cars as a Pandas DataFrame. Use double square brackets to print out a DataFrame

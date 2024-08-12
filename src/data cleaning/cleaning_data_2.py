@@ -12,7 +12,7 @@ import numpy as np
 # exercise. The pandas package has been imported as pd, and the airlines and categories DataFrames are in your
 # environment.
 
-airlines = pd.read_csv('../data/cleaning_data_sources/airlines_new.csv')
+airlines = pd.read_csv('../../data/cleaning_data_sources/airlines_new.csv')
 categories = airlines[['cleanliness', 'safety', 'satisfaction']].copy()
 
 # print Airlines DataFrame
