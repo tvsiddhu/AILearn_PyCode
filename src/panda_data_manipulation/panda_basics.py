@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 
 # Inspecting a DataFrame When you get a new DataFrame to work with, the first thing you need to do is explore it and
@@ -209,7 +208,7 @@ print(sales['date'].min())
 # The .agg() method allows you to apply your own custom functions to a DataFrame, as well as apply functions to more
 # than one column of a DataFrame at once, making your aggregations super-efficient. For example,
 #
-# df['column'].agg(function) In the custom function for this exercise, "IQR" is short for inter-quartile range,
+# df['column'].agg(function) In the custom function for this exercise, "IQR" is short for interquartile range,
 # which is the 75th percentile minus the 25th percentile. It's an alternative to standard deviation that is helpful
 # if your data contains outliers.
 
@@ -226,7 +225,7 @@ def iqr(column):
 # Print IQR of the temperature_c column
 print(sales['temperature_c'].agg(iqr))
 
-# In the custom function for this exercise, "IQR" is short for inter-quartile range, which is the 75th percentile
+# In the custom function for this exercise, "IQR" is short for interquartile range, which is the 75th percentile
 # minus the 25th percentile. It's an alternative to standard deviation that is helpful if your data contains outliers.
 
 # Update to print IQR of temperature_c, fuel_price_usd_per_l, & unemployment
@@ -450,7 +449,7 @@ print(temperatures[temperatures['city'].isin(cities)])
 # Subset temperatures_ind using .loc[]
 print(temperatures_ind.loc[cities])
 
-# 9. Setting multi-level indexes
+# 9. Setting multi-level indexes.
 # Indexes can also be made out of multiple columns, forming a multi-level index (sometimes called a hierarchical index).
 # There is a trade-off to using these.
 #
@@ -634,7 +633,7 @@ nb_sold_by_size.plot(kind='bar')
 # Show the plot
 plt.show()
 
-# 19. Changes in sales over time
+# 19. Changes in sales over time.
 # Line plots are designed to visualize the relationship between two numeric variables, where each variable is a
 # different dimension of the data. Because the x-axis is a time dimension, line plots can be used to show how a
 # numeric variable changes over time.
@@ -842,3 +841,106 @@ print(airline_totals_sorted)
 
 # Save as airline_totals_sorted.csv
 airline_totals_sorted.to_csv('../../data/panda_data_manipulation_sources/airline_totals_sorted.csv')
+
+# 29. Quiz.
+# You are working as a Data Scientist in an organization focusing on global health. Your manager has asked
+# you analyze a dataset to study Diabetes for a city in a developing country.
+#
+# The first dataset you receive was given to you as a text file. When you open the file in a text editor you see the
+# following:
+#
+# patient_id#Pregnancies#Glucose#BloodPressure#SkinThickness#Insulin#DiabetesPedigreeFunction#Outcome
+#
+# 163#0#114#80#34#285#0.167#0
+#
+# 348#3#116#0#0#0#0.187#0
+#
+# 395#4#158#78#0#0#0.803#1
+#
+# 187#8#181#68#36#495#0.615#1
+
+# What is the correct way to read the text file into a DataFrame?
+#
+# pd.read_csv('data.txt', sep='#', index_col=0)
+
+# 2. Once you have loaded in the data, you proceed to do EDA (Exploratory Data Analysis) to have a better
+# understanding of the data.
+#
+# As part of this EDA, you decided to create a box and whiskers plot to look at the Glucose levels of the patients by
+# their diabetic condition.
+#
+# Assume that the DataFrame is saved as the variable df. Fill in the blank below to display the plot.
+#
+# ________________________
+# plt.xlabel('Diabetic Condition')
+# plt.ylabel('Glucose Level')
+# plt.show()
+
+# df.boxplot(column='Glucose', by='Outcome')
+
+# 3. As you continue to explore the data, you then focus your attention on the diastolic Blood Pressure readings. You
+# realise that the raw values are not useful and decide to classify (or bin) the values according to well known Blood
+# Pressure categories.
+#
+# Fill in the blank with the  appropriate function to count the number of patients based on their Blood Pressure
+# Status.
+#
+# bins = [0, 80, 90, 120, 200]
+# bin_labels = ['Normal', 'High Blood Pressure 1', 'High Blood Pressure 2', 'Hypertensive']
+# bp_status = __________(df_main.BloodPressure, bins=bins).value_counts()
+# bp_status.index = bin_labels
+# Normal                   568
+# High Blood Pressure 1    127
+# High Blood Pressure 2     37
+# Hypertensive               1
+# Name: BloodPressure, dtype: int64
+
+# pd.cut
+
+# 4. Your manager comes to you and says that some additional features have been made available about the patients.
+# You read in the file into a DataFrame with the variable name df_new_features. The first few values are shown below.
+#
+#
+#
+#  	BMI	Age
+# patient_id
+# 30	34.1	38
+# 430	35.0	43
+# 259	25.9	24
+# 103	22.5	21
+# 525	31.6	24
+#
+# Combine the two DataFrames, taking care to match the information based on the patient_id. You also decide to sort
+# the DataFrame by ascending age and BMI.
+#
+# The resultant DataFrame should look like the following:
+#
+#
+#  	Pregnancies	Glucose	BloodPressure	SkinThickness	Insulin	DiabetesPedigreeFunction	Outcome	BMI	Age
+# patient_id
+# 372	0	118	64	23	89	1.731	0	0.0	21
+# 146	0	102	75	23	0	0.572	0	0.0	21
+# 61	2	84	0	0	0	0.304	0	0.0	21
+# 439	1	97	70	15	0	0.147	0	18.2	21
+# 527	1	97	64	19	82	0.299	0	18.2	21
+
+# df = pd.merge(df, df_new_features, on='patient_id')
+# df.sort_values(['Age', 'BMI'], inplace=True)
+
+# 5. After a discussion with your manager, you decide to focus the study on patients who are of working age. Filter
+# the dataset to keep only patients aged 65 years (country's official retirement age) or younger. Sort the DataFrame
+# by the patient_id.
+#
+# The output DataFrame should look like the following:
+#
+#
+#  	Pregnancies	Glucose	BloodPressure	SkinThickness	Insulin	DiabetesPedigreeFunction	Outcome	BMI	Age
+# patient_id
+# 372	0	118	64	23	89	1.731	0	0.0	21
+# 146	0	102	75	23	0	0.572	0	0.0	21
+# 61	2	84	0	0	0	0.304	0	0.0	21
+# 439	1	97	70	15	0	0.147	0	18.2	21
+# 527	1	97	64	19	82	0.299	0	18.2	21
+
+# df = df[df.Age <= 65]
+# df.sort_values('patient_id', inplace=True)
