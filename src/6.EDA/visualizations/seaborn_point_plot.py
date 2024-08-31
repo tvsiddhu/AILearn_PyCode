@@ -4,7 +4,7 @@ import seaborn as sns
 import numpy as np
 
 # Import student data
-student_data = pd.read_csv('../../data/eda_data_sources/student-alcohol-consumption.csv')
+student_data = pd.read_csv('../../../data/eda_data_sources/student-alcohol-consumption.csv')
 
 # 16. Customizing point plots
 # Let's continue to look at data from students in secondary school, this time using a
@@ -59,7 +59,7 @@ plt.show()
 # about their habits and preferences. We've provided the code to create a count plot of their responses to the
 # question "How often do you listen to your parents' advice?". Now let's change the style and palette to make this
 # plot easier to interpret.
-survey_data = pd.read_csv('../../data/eda_data_sources/young-people-survey-responses-parents.csv')
+survey_data = pd.read_csv('../../../data/eda_data_sources/young-people-survey-responses-parents.csv')
 
 # Set the style to "whitegrid" to help the audience determine the number of responses in each category.
 sns.set_style("whitegrid")
@@ -85,7 +85,7 @@ plt.show()
 # In this exercise, we'll continue to look at the dataset containing responses from a survey of young people.
 # Does the percentage of people reporting that they feel lonely vary depending on how many siblings they have?
 # Let's find out using a bar plot, while also adjusting the style of the plot.
-survey_data = pd.read_csv('../../data/eda_data_sources/young-people-survey-responses-siblings.csv')
+survey_data = pd.read_csv('../../../data/eda_data_sources/young-people-survey-responses-siblings.csv')
 
 # Set the scale ("context") to "paper", which is the smallest of the scale options.
 sns.set_context("paper")
@@ -121,7 +121,7 @@ plt.show()
 # So far, we've looked at several things in the dataset of survey responses from young people, including their
 # habits and preferences. Now, we'll return to this dataset and use a custom color palette to create a count plot
 # that shows the number of people who live in rural areas, suburbs, and cities.
-survey_data = pd.read_csv('../../data/eda_data_sources/young-people-survey-responses-location.csv')
+survey_data = pd.read_csv('../../../data/eda_data_sources/young-people-survey-responses-location.csv')
 
 # Set the style to "darkgrid"
 sns.set_style("darkgrid")
@@ -143,7 +143,7 @@ plt.show()
 # In the code provided, we've used relplot() with the miles per gallon dataset to create a scatter plot showing the
 # relationship between a car's weight and its horsepower. This scatter plot is assigned to the variable name g. Let's
 # add a title to this plot.
-mpg = pd.read_csv('../../data/eda_data_sources/mpg.csv')
+mpg = pd.read_csv('../../../data/eda_data_sources/mpg.csv')
 
 # Create a scatter plot of weight vs. horsepower
 g = sns.relplot(x="weight", y="horsepower", data=mpg, kind="scatter")
@@ -171,7 +171,7 @@ plt.show()
 
 # Add the following title to the plot: "Average MPG Over Time".
 
-mpg_mean = pd.read_csv('../../data/eda_data_sources/mpg_mean.csv')
+mpg_mean = pd.read_csv('../../../data/eda_data_sources/mpg_mean.csv')
 
 sns.set_context("notebook")
 sns.set_palette("bright")
@@ -216,7 +216,7 @@ plt.show()
 # One of the questions asked of the young people was: "Are you interested in having pets?" Let's explore whether the
 # distribution of ages of those answering "yes" is different from those answering "no", while taking into account
 # whether the young person was getting support from their family.
-survey_data = pd.read_csv('../../data/eda_data_sources/young-people-survey-responses-pets.csv')
+survey_data = pd.read_csv('../../../data/eda_data_sources/young-people-survey-responses-pets.csv')
 
 # Set palette to "Blues".
 sns.set_palette("Blues")
@@ -230,7 +230,7 @@ g.fig.suptitle("Age of Those Interested in Pets vs. Not", y=1.03)
 # Show plot
 plt.show()
 
-survey_data = pd.read_csv('../../data/eda_data_sources/young-people-survey-responses-techno.csv')
+survey_data = pd.read_csv('../../../data/eda_data_sources/young-people-survey-responses-techno.csv')
 
 # Set the figure style to "dark".
 sns.set_style("dark")

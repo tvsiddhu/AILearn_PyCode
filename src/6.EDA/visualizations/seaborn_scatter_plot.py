@@ -14,7 +14,7 @@ import seaborn as sns
 # can read and write.
 
 # Read the data from the csv file
-df = pd.read_csv('../../data/eda_data_sources/countries-of-the-world.csv')
+df = pd.read_csv('../../../data/eda_data_sources/countries-of-the-world.csv')
 gdp = df['GDP ($ per capita)']
 phones = df['Phones (per 1000)']
 percent_literate = df['Literacy (%)']
@@ -37,7 +37,7 @@ plt.show()
 # the course, segmented by where the student lives (rural vs. urban area).
 
 # Read the data from the csv file
-student_data = pd.read_csv('../../data/eda_data_sources/student-alcohol-consumption.csv')
+student_data = pd.read_csv('../../../data/eda_data_sources/student-alcohol-consumption.csv')
 
 # Create a scatter plot of absences vs. final grade
 sns.scatterplot(x='absences', y='G3', data=student_data, hue='location')
@@ -121,7 +121,7 @@ plt.show()
 # Use relplot() and the mpg DataFrame to create a scatter plot with "horsepower" on the x-axis and "mpg" on the
 # y-axis. Vary the size of the points by the number of cylinders in the car ("cylinders").
 
-mpg = pd.read_csv('../../data/eda_data_sources/mpg.csv')
+mpg = pd.read_csv('../../../data/eda_data_sources/mpg.csv')
 
 # Create a scatter plot of horsepower vs. mpg
 sns.relplot(x="horsepower", y="mpg", data=mpg, kind="scatter", size="cylinders")

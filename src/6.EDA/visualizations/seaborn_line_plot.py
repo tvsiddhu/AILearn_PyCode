@@ -8,7 +8,7 @@ import seaborn as sns
 # its engine (measured in "horsepower"), and its country of origin.
 #
 # How has the average miles per gallon achieved by these cars changed over time? Let's use line plots to find out!
-mpg = pd.read_csv('../../data/eda_data_sources/mpg.csv')
+mpg = pd.read_csv('../../../data/eda_data_sources/mpg.csv')
 
 
 # Create line plot
@@ -68,7 +68,7 @@ plt.show()
 # variable to count (x=____), the pandas DataFrame to use (data=____), and the type of plot (kind="count").
 
 # Import the data
-survey_data = pd.read_csv('../../data/eda_data_sources/young-people-survey-responses.csv')
+survey_data = pd.read_csv('../../../data/eda_data_sources/young-people-survey-responses.csv')
 
 # Create column plot based on internet usage
 sns.catplot(x="Internet usage", data=survey_data, kind="count")

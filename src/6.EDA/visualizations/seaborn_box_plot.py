@@ -3,7 +3,7 @@ import pandas as pd
 import seaborn as sns
 
 # Import student data
-student_data = pd.read_csv('../../data/eda_data_sources/student-alcohol-consumption.csv')
+student_data = pd.read_csv('../../../data/eda_data_sources/student-alcohol-consumption.csv')
 
 # 16. Create and interpret a box plot Let's continue using the student_data dataset. In an earlier exercise,
 # we explored the relationship between studying and final grade by using a bar plot to compare the average final
