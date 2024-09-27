@@ -3,9 +3,11 @@ import re
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.neighbors import KNeighborsClassifier
+
+import preprocessing_intro as pi
 
 ufo = pd.read_csv('../../../data/preprocessing_data_sources/ufo_sightings_large.csv')
 
@@ -160,32 +162,9 @@ to_drop = ['city', 'country', 'lat', 'long', 'state', 'date', 'recorded', 'desc'
 # Drop those features
 ufo_dropped = ufo.drop(to_drop, axis=1).fillna(0)
 
-
-def return_weights(vocab, original_vocab, vector, vector_index, top_n):
-    zipped = dict(zip(vector[vector_index].indices, vector[vector_index].data))
-
-    # Transform that zipped dict into a series
-    zipped_series = pd.Series({vocab[i]: zipped[i] for i in vector[vector_index].indices})
-
-    # Sort the series to pull out the top n weighted words
-    zipped_index = zipped_series.sort_values(ascending=False)[:top_n].index
-    return [original_vocab[i] for i in zipped_index]
-
-
-def words_to_filter(vocab, original_vocab, vector, top_n):
-    filter_list = []
-    for i in range(0, vector.shape[0]):
-        # Call the return_weights function and extend filter_list
-        filtered = return_weights(vocab, original_vocab, vector, i, top_n)
-        filter_list.extend(filtered)
-
-    # Return the list in a set, so we don't get duplicate word indices
-    return set(filter_list)
-
-
 # Let's also filter some words out of the text vector we created
 vocab = {v: k for k, v in vec.vocabulary_.items()}
-filtered_words = words_to_filter(vocab, vec.vocabulary_, desc_tfidf, 4)
+filtered_words = pi.words_to_filter(vocab, vec.vocabulary_, desc_tfidf, 4)
 
 # Modeling the UFO dataset, part 1
 
@@ -199,7 +178,7 @@ filtered_words = words_to_filter(vocab, vec.vocabulary_, desc_tfidf, 4)
 
 # to check - X = ufo_dropped.select_dtypes(include=[np.number])
 
-X = ufo_dropped.drop(['country_enc','type'], axis=1)
+X = ufo_dropped.drop(['country_enc', 'type'], axis=1)
 y = ufo_dropped['country_enc']
 
 # Take a look at the features in the X set of data
