@@ -1,14 +1,14 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
-import numpy as np
 from sklearn.manifold import TSNE
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-
-
 # 1. Removing features without variance
+
+print("Removing features without variance")
 
 # Load pokemon dataset
 pokemon_df = pd.read_csv('../../data/dimensionality_reduction_sources/pokemon_gen1.csv')
@@ -28,6 +28,8 @@ df_selected = pokemon_df[number_cols + non_number_cols]
 print(df_selected.head())
 
 # 2. Visually detecting redundant features
+
+print("Visually detecting redundant features")
 
 # Load the dataset
 ansur_df_1 = pd.read_csv('../../data/dimensionality_reduction_sources/ansur_df_1.csv')
@@ -84,6 +86,8 @@ print("t-SNE Features Shape:", tsne_features.shape)
 
 # 4. t-SNE visualisation of dimensionality
 
+print("t-SNE visualisation of dimensionality")
+
 # Color the points according to Army Component
 sns.scatterplot(x=tsne_features[:, 0], y=tsne_features[:, 1], hue=ansur_df['Component'])
 
@@ -103,7 +107,7 @@ sns.scatterplot(x=tsne_features[:, 0], y=tsne_features[:, 1], hue=ansur_df['Gend
 plt.show()
 
 # The curse of dimensionality
-
+print("The curse of dimensionality")
 # 5. Train-test split
 
 # Load the dataset
@@ -121,7 +125,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 print(f"{X_test.shape[0]} rows in test set vs. {X_train.shape[0]} in training set, {X_test.shape[1]} Features.")
 
 # 6. Fitting and testing the model
-
+print("Fitting and testing the model")
 # Import SVC from sklearn.svm and accuracy_score from sklearn.metrics
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
@@ -139,7 +143,7 @@ accuracy_test = accuracy_score(y_test, svc.predict(X_test))
 print(f"{accuracy_test:.1%} accuracy on test set vs. {accuracy_train:.1%} on training set")
 
 # 7. Accuracy after dimensionality reduction
-
+print("Accuracy after dimensionality reduction")
 # Assign just the 'neckcircumferencebase' column from ansur_df to X
 X = ansur_df[['neckcircumferencebase']]
 
@@ -155,7 +159,7 @@ accuracy_test = accuracy_score(y_test, svc.predict(X_test))
 print(f"{accuracy_test:.1%} accuracy on test set vs. {accuracy_train:.1%} on training set")
 
 # 8. Finding a good variance threshold
-
+print("Finding a good variance threshold")
 # Load the dataset
 head_df = pd.read_csv('../../data/dimensionality_reduction_sources/ansur_head_df.csv')
 
@@ -174,7 +178,7 @@ plt.show()
 print(normalized_df.var())
 
 # 9. Features with low variance
-
+print("Features with low variance")
 from sklearn.feature_selection import VarianceThreshold
 
 # Create a VarianceThreshold feature selector
@@ -192,7 +196,7 @@ reduced_df = head_df.loc[:, mask]
 print(f"Dimensionality reduced from {normalized_df.shape[1]} to {reduced_df.shape[1]}.")
 
 # 10. Removing features with many missing values
-
+print("Removing features with many missing values")
 # Load the dataset
 school_df = pd.read_csv('../../data/dimensionality_reduction_sources/boston.csv')
 
@@ -214,6 +218,7 @@ print(reduced_df.shape)
 print(f"Dimensionality reduced from {school_df.shape[1]} to {reduced_df.shape[1]}.")
 
 # 11. Correlation and scale
+print("Correlation and scale")
 ansur_df = pd.read_csv('../../data/dimensionality_reduction_sources/ansur_correlation.csv')
 # Inspecting the correlation matrix
 print(ansur_df.corr())
@@ -223,7 +228,7 @@ corr = ansur_df.corr()
 cmap = sns.diverging_palette(h_neg=10, h_pos=240, as_cmap=True)
 
 # Draw the heatmap
-sns.heatmap(corr,  cmap=cmap, center=0, linewidths=1, annot=True, fmt=".2f")
+sns.heatmap(corr, cmap=cmap, center=0, linewidths=1, annot=True, fmt=".2f")
 plt.show()
 
 # Generate a mask for the upper triangle
@@ -235,6 +240,7 @@ sns.heatmap(corr, mask=mask, cmap=cmap, center=0, linewidths=1, annot=True, fmt=
 plt.show()
 
 # 11. Removing highly correlated features
+print("Removing highly correlated features")
 
 ansur_df = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_MALE.csv')
 ansur_df = ansur_df.apply(pd.to_numeric, errors='coerce')
@@ -255,7 +261,7 @@ reduced_df = ansur_df.drop(to_drop, axis=1)
 print(f"The reduced dataframe has {reduced_df.shape[1]} columns.")
 
 # 12. Nuclear energy and pool drownings
-
+print("Nuclear energy and pool drownings")
 # Load the dataset
 weird_df = pd.read_csv('../../data/dimensionality_reduction_sources/weird_df.csv')
 
@@ -266,10 +272,11 @@ sns.scatterplot(x='nuclear_energy', y='pool_drownings', data=weird_df)
 plt.show()
 
 # Print out the correlation matrix of weird_df
-print("Correlation between nuclear energy production and pool drownings:", weird_df.corr().loc['nuclear_energy', 'pool_drownings'])
+print("Correlation between nuclear energy production and pool drownings:",
+      weird_df.corr().loc['nuclear_energy', 'pool_drownings'])
 
 # 13. Selecting features for model performance - Building a diabetes classifier
-
+print("Selecting features for model performance - Building a diabetes classifier")
 # Load the dataset
 diabetes_df = pd.read_csv('../../data/dimensionality_reduction_sources/PimaIndians.csv')
 
@@ -284,6 +291,7 @@ X_train_std = scaler.fit_transform(X_train)
 
 # Fit the logistic regression model on the scaled training data
 from sklearn.linear_model import LogisticRegression
+
 lr = LogisticRegression()
 lr.fit(X_train_std, y_train)
 
@@ -298,7 +306,7 @@ print(f"{accuracy_score(y_test, y_pred):.1%} accuracy on test set.")
 print(dict(zip(X.columns, abs(lr.coef_[0]).round(2))))
 
 # 14. Manual Recursive Feature Elimination
-
+print("Manual Recursive Feature Elimination")
 from sklearn.feature_selection import RFE
 
 # Remove the feature with the lowest model coefficient
@@ -358,11 +366,11 @@ print(f"{acc:.1%} accuracy on test set. and removed 'triceps', 'bmi', 'family', 
 print(dict(zip(X.columns, abs(lr.coef_[0]).round(2))))
 
 # 15. Automatic Recursive Feature Elimination
+print("Automatic Recursive Feature Elimination")
 X = diabetes_df[['glucose', 'bmi', 'age']]
 y = diabetes_df['test']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
-
 
 rfe = RFE(estimator=LogisticRegression(), n_features_to_select=3, verbose=1)
 
@@ -378,3 +386,225 @@ print(X.columns[rfe.support_])
 # Calculates the test set accuracy
 acc = accuracy_score(y_test, rfe.estimator_.predict(scaler.transform(X_test)))
 print("{0:.1%} accuracy on test set.".format(acc))
+
+# 16. Building a random forest model
+print("Building a random forest model")
+
+X = diabetes_df.drop('test', axis=1)
+
+y = diabetes_df['test']
+
+# Perform a 75% training and 25% test data split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+from sklearn.ensemble import RandomForestClassifier
+
+# Fit the random forest model to the training data
+rf = RandomForestClassifier(random_state=0)
+rf.fit(X_train, y_train)
+
+# Calculate the test set accuracy
+acc = accuracy_score(y_test, rf.predict(X_test))
+print(f"{acc:.1%} accuracy on test set.")
+
+# Print the importance per feature
+print("Print the importance per feature:")
+print(dict(zip(X.columns, rf.feature_importances_.round(2))))
+
+# Print accuracy
+print("{0:.1%} accuracy on test set.".format(acc))
+
+# 17. Random forest for feature selection
+print("Random forest for feature selection")
+# Fit the random forest model to the training data
+rf.fit(X_train, y_train)
+
+# Create a mask for features with an importance higher than 0.15
+mask = rf.feature_importances_ > 0.15
+
+# Prints out the mask
+print(mask)
+
+# Apply the mask to the feature dataset X
+reduced_X = X.loc[:, mask]
+
+# prints out the selected column names
+print(reduced_X.columns)
+
+# Recursive Feature Elimination with random forests
+from sklearn.feature_selection import RFE
+
+# Create the RFE with a RandomForestClassifier estimator and 3 features to select
+rfe = RFE(estimator=RandomForestClassifier(), n_features_to_select=2, verbose=1)
+
+# Fit the eliminator to the data
+rfe.fit(X_train, y_train)
+
+# Print the features and their ranking (high = dropped early on)
+print(dict(zip(X.columns, rfe.ranking_)))
+
+# Print the features that are not eliminated
+print(X.columns[rfe.support_])
+
+# Create a mask for using the support_ attribute of rfe
+mask = rfe.support_
+
+# Apply the mask to the feature dataset X and print the result
+reduced_X = X.loc[:, mask]
+print("Applying the mask to feature dataset X and printing the result", reduced_X.columns)
+
+# 18. Random forest accuracy
+print("Random forest accuracy")
+# Transform X with RFE selector
+X_train_rfe = rfe.transform(X_train)
+X_test_rfe = rfe.transform(X_test)
+
+# Fit the random forest model to the training data
+rf.fit(X_train_rfe, y_train)
+
+# Calculate the test set accuracy
+acc = accuracy_score(y_test, rf.predict(X_test_rfe))
+print("{0:.1%} accuracy on test set.".format(acc))
+
+# Wrap the feature eliminator around the random forest model
+rfe_rf = RFE(estimator=RandomForestClassifier(), n_features_to_select=3, verbose=1, step=2)
+
+# Fit the combined model to the training data
+rfe_rf.fit(X_train, y_train)
+
+# Calculate the test set accuracy
+acc = accuracy_score(y_test, rfe_rf.predict(X_test))
+print("{0:.1%} accuracy on test set.".format(acc))
+
+# 19. Creating a LASSO regressor
+print("Creating a LASSO regressor")
+from sklearn.linear_model import Lasso
+
+# FROM THIS POINT ON THE CODE IS NOT WORKING CORRECTLY. THIS IS DUE TO THE VARIANCES IN THE ANSUR DATASET
+
+ansur_male_df = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_MALE.csv')
+ansur_female_df = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_FEMALE.csv')
+
+frames = [ansur_male_df, ansur_female_df]
+df = pd.concat(frames)
+
+non_numeric = ['Branch', 'Gender', 'Component', 'BMI_class', 'Height_class']
+# Select the Gender column as the feature to be predicted (y)
+y = df['BMI']
+
+# Remove the Gender column to create the training data
+X = df.drop(non_numeric, axis=1)
+
+# Set the test size to 30% to get a 70-30% train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+# Fit the scaler on the training features and transform these in one go
+X_train_std = scaler.fit_transform(X_train, y_train)
+
+# Create the Lasso model
+la = Lasso()
+
+# Fit it to the standardized training data
+la.fit(X_train_std, y_train)
+
+# 20. Lasso model results
+print("Lasso model results")
+
+# Transform the test set with the pre-fitted scaler
+X_test_std = scaler.transform(X_test)
+
+# Calculate the coefficient of determination (R squared) on the scaled test set X_test_std
+r_squared = la.score(X_test_std, y_test)
+print(f"R squared: {r_squared:.2f}")
+print("The model can predict {0:.1%} of the variance in the test set.".format(r_squared))
+
+# Create a list that has True values when coefficients equal 0
+zero_coef = la.coef_ == 0
+
+# Calculate how many features have a zero coefficient
+n_ignored = sum(zero_coef)
+print(f"The model has ignored {n_ignored} out of {len(la.coef_)} features.")
+
+# 21. Adjusting the regularization strength
+print("Adjusting the regularization strength")
+# Find the highest alpha value with R-squared above 98%
+la = Lasso(alpha=0.1, random_state=0)
+
+# Fits the model and calculates performance stats
+la.fit(X_train_std, y_train)
+r_squared = la.score(X_test_std, y_test)
+n_ignored_features = sum(la.coef_ == 0)
+
+# Print performance stats
+print(f"The model can predict {r_squared:.1%} of the variance in the test set.")
+print(f"The model has ignored {n_ignored_features} out of {len(la.coef_)} features.")
+
+# Creating a LassoCV regressor
+from sklearn.linear_model import LassoCV
+
+# Create and fit the LassoCV model on the training set
+lcv = LassoCV()
+lcv.fit(X_train, y_train)
+print('Optimal alpha = {0:.3f}'.format(lcv.alpha_))
+
+# Calculate R squared on the test set
+r_squared = lcv.score(X_test, y_test)
+print('The model explains {0:.1%} of the test set variance'.format(r_squared))
+
+# Create a mask for coefficients not equal to zero
+lcv_mask = lcv.coef_ != 0
+print('{} features out of {} selected'.format(sum(lcv_mask), len(lcv_mask)))
+
+# 22. Ensemble models for extra votes
+print("Ensemble models for extra votes")
+
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import GradientBoostingRegressor
+
+# Select 10 features with RFE on a GradientBoostingRegressor, drop 3 features on each step
+rfe_gb = RFE(estimator=GradientBoostingRegressor(), n_features_to_select=10, step=3, verbose=1)
+rfe_gb.fit(X_train, y_train)
+
+# Calculate the R squared on the test set
+r_squared = rfe_gb.score(X_test, y_test)
+print('The model can explain {0:.1%} of the variance in the test set'.format(r_squared))
+
+# Assign the support array to gb_mask
+gb_mask = rfe_gb.support_
+
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import RandomForestRegressor
+
+# Select 10 features with RFE on a RandomForestRegressor, drop 3 features on each step
+rfe_rf = RFE(estimator=RandomForestRegressor(), n_features_to_select=10, step=3, verbose=1)
+rfe_rf.fit(X_train, y_train)
+
+# Calculate the R squared on the test set
+r_squared = rfe_rf.score(X_test, y_test)
+print('The model can explain {0:.1%} of the variance in the test set'.format(r_squared))
+
+# Assign the support array to gb_mask
+rf_mask = rfe_rf.support_
+
+# Combining 3 feature selectors
+# Sum the votes of the three models
+votes = np.sum([lcv_mask, gb_mask, rf_mask], axis=0)
+print(votes)
+
+# Create a mask for features selected by all 3 models
+meta_mask = votes >= 3
+print(meta_mask)
+
+# Apply the dimensionality reduction on X
+X_reduced = X.loc[:, meta_mask]
+print(X_reduced.columns)
+
+# Plug the reduced dataset into a linear regression pipeline
+from sklearn.pipeline import make_pipeline
+from sklearn.linear_model import LinearRegression
+lm = LinearRegression()
+
+X_train, X_test, y_train, y_test = train_test_split(X_reduced, y, test_size=0.3, random_state=0)
+lm.fit(scaler.fit_transform(X_train), y_train)
+r_squared = lm.score(scaler.transform(X_test), y_test)
+print('The model can explain {0:.1%} of the variance in the test set using {1} features.'.format(r_squared, len(lm.coef_)))
