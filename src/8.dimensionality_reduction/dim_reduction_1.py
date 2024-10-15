@@ -2,9 +2,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.feature_selection import RFE
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.linear_model import Lasso
+from sklearn.linear_model import LassoCV
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LogisticRegression
 from sklearn.manifold import TSNE
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
 
 # 1. Removing features without variance
 
@@ -126,9 +137,6 @@ print(f"{X_test.shape[0]} rows in test set vs. {X_train.shape[0]} in training se
 
 # 6. Fitting and testing the model
 print("Fitting and testing the model")
-# Import SVC from sklearn.svm and accuracy_score from sklearn.metrics
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score
 
 # Create an instance of the Support Vector Classification class
 svc = SVC()
@@ -179,7 +187,6 @@ print(normalized_df.var())
 
 # 9. Features with low variance
 print("Features with low variance")
-from sklearn.feature_selection import VarianceThreshold
 
 # Create a VarianceThreshold feature selector
 sel = VarianceThreshold(threshold=0.001)
@@ -280,19 +287,21 @@ print("Selecting features for model performance - Building a diabetes classifier
 # Load the dataset
 diabetes_df = pd.read_csv('../../data/dimensionality_reduction_sources/PimaIndians.csv')
 
-X = diabetes_df.drop('test', axis=1)
+predictors_vars = ['pregnant', 'glucose', 'diastolic', 'triceps', 'insulin', 'bmi', 'family', 'age']
+target_var = ['test']
 
-y = diabetes_df['test']
+X = diabetes_df[predictors_vars]
+y = diabetes_df[target_var]
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
 scaler = StandardScaler()
+lr = LogisticRegression()
+
 # Fit the scaler on the training features and transform these in one go
 X_train_std = scaler.fit_transform(X_train)
 
 # Fit the logistic regression model on the scaled training data
-from sklearn.linear_model import LogisticRegression
-
-lr = LogisticRegression()
 lr.fit(X_train_std, y_train)
 
 # Scale the test features
@@ -302,12 +311,11 @@ X_test_std = scaler.transform(X_test)
 y_pred = lr.predict(X_test_std)
 
 # Prints accuracy metrics and feature coefficients
-print(f"{accuracy_score(y_test, y_pred):.1%} accuracy on test set.")
+print("{0:.1%} accuracy on test set.".format(accuracy_score(y_test, y_pred)))
 print(dict(zip(X.columns, abs(lr.coef_[0]).round(2))))
 
 # 14. Manual Recursive Feature Elimination
 print("Manual Recursive Feature Elimination")
-from sklearn.feature_selection import RFE
 
 # Remove the feature with the lowest model coefficient
 X = diabetes_df[['pregnant', 'glucose', 'diastolic', 'triceps', 'insulin', 'bmi', 'family', 'age']]
@@ -397,8 +405,6 @@ y = diabetes_df['test']
 # Perform a 75% training and 25% test data split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
 
-from sklearn.ensemble import RandomForestClassifier
-
 # Fit the random forest model to the training data
 rf = RandomForestClassifier(random_state=0)
 rf.fit(X_train, y_train)
@@ -432,7 +438,6 @@ reduced_X = X.loc[:, mask]
 print(reduced_X.columns)
 
 # Recursive Feature Elimination with random forests
-from sklearn.feature_selection import RFE
 
 # Create the RFE with a RandomForestClassifier estimator and 3 features to select
 rfe = RFE(estimator=RandomForestClassifier(), n_features_to_select=2, verbose=1)
@@ -476,11 +481,11 @@ rfe_rf.fit(X_train, y_train)
 acc = accuracy_score(y_test, rfe_rf.predict(X_test))
 print("{0:.1%} accuracy on test set.".format(acc))
 
+# FROM THIS POINT ON THE CODE IS NOT WORKING CORRECTLY. THIS IS DUE TO THE VARIANCES IN THE ANSUR DATASET
+
+
 # 19. Creating a LASSO regressor
 print("Creating a LASSO regressor")
-from sklearn.linear_model import Lasso
-
-# FROM THIS POINT ON THE CODE IS NOT WORKING CORRECTLY. THIS IS DUE TO THE VARIANCES IN THE ANSUR DATASET
 
 ansur_male_df = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_MALE.csv')
 ansur_female_df = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_FEMALE.csv')
@@ -540,7 +545,6 @@ print(f"The model can predict {r_squared:.1%} of the variance in the test set.")
 print(f"The model has ignored {n_ignored_features} out of {len(la.coef_)} features.")
 
 # Creating a LassoCV regressor
-from sklearn.linear_model import LassoCV
 
 # Create and fit the LassoCV model on the training set
 lcv = LassoCV()
@@ -558,9 +562,6 @@ print('{} features out of {} selected'.format(sum(lcv_mask), len(lcv_mask)))
 # 22. Ensemble models for extra votes
 print("Ensemble models for extra votes")
 
-from sklearn.feature_selection import RFE
-from sklearn.ensemble import GradientBoostingRegressor
-
 # Select 10 features with RFE on a GradientBoostingRegressor, drop 3 features on each step
 rfe_gb = RFE(estimator=GradientBoostingRegressor(), n_features_to_select=10, step=3, verbose=1)
 rfe_gb.fit(X_train, y_train)
@@ -571,9 +572,6 @@ print('The model can explain {0:.1%} of the variance in the test set'.format(r_s
 
 # Assign the support array to gb_mask
 gb_mask = rfe_gb.support_
-
-from sklearn.feature_selection import RFE
-from sklearn.ensemble import RandomForestRegressor
 
 # Select 10 features with RFE on a RandomForestRegressor, drop 3 features on each step
 rfe_rf = RFE(estimator=RandomForestRegressor(), n_features_to_select=10, step=3, verbose=1)
@@ -600,11 +598,11 @@ X_reduced = X.loc[:, meta_mask]
 print(X_reduced.columns)
 
 # Plug the reduced dataset into a linear regression pipeline
-from sklearn.pipeline import make_pipeline
-from sklearn.linear_model import LinearRegression
+
 lm = LinearRegression()
 
 X_train, X_test, y_train, y_test = train_test_split(X_reduced, y, test_size=0.3, random_state=0)
 lm.fit(scaler.fit_transform(X_train), y_train)
 r_squared = lm.score(scaler.transform(X_test), y_test)
-print('The model can explain {0:.1%} of the variance in the test set using {1} features.'.format(r_squared, len(lm.coef_)))
+print('The model can explain {0:.1%} of the variance in the test set using {1} features.'.format(r_squared,
+                                                                                                 len(lm.coef_)))
