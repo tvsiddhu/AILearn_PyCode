@@ -1,10 +1,8 @@
 # Machine learning with scikit-learn
-# Supervised learning
-# Classification
-# K-Nearest Neighbors
+# Supervised learning - Classification & K-Nearest Neighbors
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
@@ -15,7 +13,7 @@ print(churn_df.head())
 
 # 2. Create feature and target arrays
 X = churn_df["churn"].values
-y = churn_df[["account_length","customer_service_calls"]].values
+y = churn_df[["account_length", "customer_service_calls"]].values
 
 # 3. Create a K-NN classifier with 6 neighbors
 knn = KNeighborsClassifier(n_neighbors=6)
