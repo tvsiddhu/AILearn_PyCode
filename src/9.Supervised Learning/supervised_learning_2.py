@@ -1,15 +1,22 @@
 # Machine learning with scikit-learn
 # Supervised learning - Regression & Linear Regression
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn import datasets, linear_model
-from sklearn.metrics import mean_squared_error
+from sklearn.linear_model import Lasso
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import Ridge
+from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import cross_val_score, cross_val_predict, KFold
+from sklearn.metrics import roc_curve
+from sklearn.model_selection import cross_val_score, KFold, train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.utils import class_weight
 
 # Load the sales dataset
 sales_df = pd.read_csv('../../data/supervised_learning/advertising_and_sales.csv')
@@ -102,7 +109,7 @@ print("95% confidence interval: {}".format(np.percentile(cv_scores, [2.5, 97.5])
 # Regularized regression
 
 # Import Ridge
-from sklearn.linear_model import Ridge
+
 
 alphas = [0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0]
 ridge_scores = []
@@ -120,7 +127,7 @@ for alpha in alphas:
 print("Ridge Scores: ", ridge_scores)
 
 # Lasso regression for feature selection
-from sklearn.linear_model import Lasso
+
 
 # Instantiate a lasso regression model
 lasso = Lasso(alpha=0.3)
@@ -136,3 +143,111 @@ plt.xticks(range(len(sales_df.columns) - 1), sales_df.columns[:-1], rotation=45)
 plt.ylabel("Coefficients")
 plt.show()
 
+# Assessing a diabetes prediction classifier
+
+# Load the diabetes dataset
+diabetes_df = pd.read_csv('../../data/supervised_learning/diabetes_clean.csv')
+
+knn = KNeighborsClassifier(n_neighbors=6)
+
+# Create arrays for the features and the response variable
+y = diabetes_df['diabetes'].values
+X = diabetes_df.drop('diabetes', axis=1).values
+
+# Split into training and test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+
+# Fit the classifier to the training data
+knn.fit(X_train, y_train)
+
+# Predict the labels of the test data
+y_pred = knn.predict(X_test)
+
+# Generate the confusion matrix and classification report
+print("Confusion Matrix: ")
+print(confusion_matrix(y_test, y_pred))
+print("Classification Report: ")
+print(classification_report(y_test, y_pred))
+
+# Building a logistic regression model
+
+
+# Instantiate a Logistic Regression model
+
+logreg = LogisticRegression()
+
+# Fit the model to the data
+logreg.fit(X_train, y_train)
+
+# Predict the probabilities of each individual in the test set having a diabetes diagnosis, storing the array of
+# positive probabilities as y_pred_probs.
+
+y_pred_probs = logreg.predict_proba(X_test)[:, 1]
+
+print("Predicted Probabilities: ", y_pred_probs[:10])
+
+# The ROC curve
+
+# Generate ROC Curve values: fpr, tpr, thresholds
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_probs)
+
+# Plot ROC curve
+plt.plot([0, 1], [0, 1], 'k--')
+plt.plot(fpr, tpr)
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC Curve for Diabetes Prediction')
+plt.show()
+
+# AUC computation
+# Import the roc_auc_score function
+
+# Compute and print AUC score
+print("AUC: {}".format(roc_auc_score(y_test, y_pred_probs)))
+
+# Calculate the confusion matrix and classification report
+y_pred = logreg.predict(X_test)
+print("Confusion Matrix: ")
+print(confusion_matrix(y_test, y_pred))
+print("Classification Report: ")
+print(classification_report(y_test, y_pred))
+
+# Hyperparameter tuning with GridSearchCV
+
+# Set up the hyperparameter grid
+param_grid = {"alpha": np.linspace(0.00001, 1, 20)}
+
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
+
+# Instantiate lasso_cv
+lasso_cv = GridSearchCV(lasso, param_grid, cv=kf)
+
+# Fit to the training set
+lasso_cv.fit(X_train, y_train)
+
+# Predict the labels of the test set
+print("Tuned lasso parameters: {}".format(lasso_cv.best_params_))
+print(" Tuned lasso score: {}".format(lasso_cv.best_score_))
+
+# Hyperparameter tuning with RandomizedSearchCV
+
+# Import RandomizedSearchCV
+
+# Create the parameter grid
+# Check the parameter space
+params = {
+    "penalty": ["l1", "l2"],
+    "tol": np.linspace(0.0001, 1.0, 50),  # Make sure to include 'tol' in the params
+    "C": np.linspace(0.1, 1.0, 50),
+    "class_weight": ["balanced", {0:0.8, 1:0.2}]
+}
+
+# Instantiate the RandomizedSearchCV object
+logreg_cv = RandomizedSearchCV(logreg, params, cv=kf)
+
+# Fit it to the data
+logreg_cv.fit(X_train, y_train)
+
+# Print the tuned parameters and score
+print("Tuned Logistic Regression Parameters: {}".format(logreg_cv.best_params_))
+print("Best score is {}".format(logreg_cv.best_score_))
