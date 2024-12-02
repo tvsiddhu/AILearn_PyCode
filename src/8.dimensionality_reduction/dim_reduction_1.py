@@ -22,7 +22,7 @@ from sklearn.svm import SVC
 print("Removing features without variance")
 
 # Load pokemon dataset
-pokemon_df = pd.read_csv('../../data/dimensionality_reduction_sources/pokemon_gen1.csv')
+pokemon_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/pokemon_gen1.csv')
 print(pokemon_df.head())
 print(pokemon_df.describe())
 
@@ -43,8 +43,8 @@ print(df_selected.head())
 print("Visually detecting redundant features")
 
 # Load the dataset
-ansur_df_1 = pd.read_csv('../../data/dimensionality_reduction_sources/ansur_df_1.csv')
-ansur_df_2 = pd.read_csv('../../data/dimensionality_reduction_sources/ansur_df_2.csv')
+ansur_df_1 = pd.read_csv('../../data/8.dimensionality_reduction_sources/ansur_df_1.csv')
+ansur_df_2 = pd.read_csv('../../data/8.dimensionality_reduction_sources/ansur_df_2.csv')
 
 # Create a pairplot and color the points using the 'Gender' feature
 sns.pairplot(ansur_df_1, hue='Gender', diag_kind='hist')
@@ -80,7 +80,7 @@ plt.show()
 
 
 # Load the dataset
-ansur_df = pd.read_csv('../../data/dimensionality_reduction_sources/ansur_t-SNE.csv')
+ansur_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/ansur_t-SNE.csv')
 
 # Non-numerical columns in the dataset
 non_numeric = ['Branch', 'Gender', 'Component']
@@ -122,7 +122,7 @@ print("The curse of dimensionality")
 # 5. Train-test split
 
 # Load the dataset
-ansur_df = pd.read_csv('../../data/dimensionality_reduction_sources/ansur_test_train.csv')
+ansur_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/ansur_test_train.csv')
 
 # Select the Gender column as the feature to be predicted (y)
 y = ansur_df['Gender']
@@ -169,7 +169,7 @@ print(f"{accuracy_test:.1%} accuracy on test set vs. {accuracy_train:.1%} on tra
 # 8. Finding a good variance threshold
 print("Finding a good variance threshold")
 # Load the dataset
-head_df = pd.read_csv('../../data/dimensionality_reduction_sources/ansur_head_df.csv')
+head_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/ansur_head_df.csv')
 
 # Create the boxplot
 head_df.boxplot()
@@ -205,7 +205,7 @@ print(f"Dimensionality reduced from {normalized_df.shape[1]} to {reduced_df.shap
 # 10. Removing features with many missing values
 print("Removing features with many missing values")
 # Load the dataset
-school_df = pd.read_csv('../../data/dimensionality_reduction_sources/boston.csv')
+school_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/boston.csv')
 
 # Find the highest ratio of missing values for a single feature in the dataset
 missing_ratios = school_df.isna().sum() / len(school_df)
@@ -226,7 +226,7 @@ print(f"Dimensionality reduced from {school_df.shape[1]} to {reduced_df.shape[1]
 
 # 11. Correlation and scale
 print("Correlation and scale")
-ansur_df = pd.read_csv('../../data/dimensionality_reduction_sources/ansur_correlation.csv')
+ansur_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/ansur_correlation.csv')
 # Inspecting the correlation matrix
 print(ansur_df.corr())
 
@@ -249,7 +249,7 @@ plt.show()
 # 11. Removing highly correlated features
 print("Removing highly correlated features")
 
-ansur_df = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_MALE.csv')
+ansur_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/ANSUR_II_MALE.csv')
 ansur_df = ansur_df.apply(pd.to_numeric, errors='coerce')
 
 # Calculate the correlation matrix and take the absolute value
@@ -270,7 +270,7 @@ print(f"The reduced dataframe has {reduced_df.shape[1]} columns.")
 # 12. Nuclear energy and pool drownings
 print("Nuclear energy and pool drownings")
 # Load the dataset
-weird_df = pd.read_csv('../../data/dimensionality_reduction_sources/weird_df.csv')
+weird_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/weird_df.csv')
 
 # Put nuclear energy production on the x-axis and the number of pool drownings on the y-axis
 sns.scatterplot(x='nuclear_energy', y='pool_drownings', data=weird_df)
@@ -285,7 +285,7 @@ print("Correlation between nuclear energy production and pool drownings:",
 # 13. Selecting features for model performance - Building a diabetes classifier
 print("Selecting features for model performance - Building a diabetes classifier")
 # Load the dataset
-diabetes_df = pd.read_csv('../../data/dimensionality_reduction_sources/PimaIndians.csv')
+diabetes_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/PimaIndians.csv')
 
 predictors_vars = ['pregnant', 'glucose', 'diastolic', 'triceps', 'insulin', 'bmi', 'family', 'age']
 target_var = ['test']
@@ -487,8 +487,8 @@ print("{0:.1%} accuracy on test set.".format(acc))
 # 19. Creating a LASSO regressor
 print("Creating a LASSO regressor")
 
-ansur_male_df = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_MALE.csv')
-ansur_female_df = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_FEMALE.csv')
+ansur_male_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/ANSUR_II_MALE.csv')
+ansur_female_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/ANSUR_II_FEMALE.csv')
 
 frames = [ansur_male_df, ansur_female_df]
 df = pd.concat(frames)

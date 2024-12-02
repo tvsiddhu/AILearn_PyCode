@@ -24,7 +24,7 @@ for day in seven_days:
 
 print("------Create a time series of air quality data -----------")
 
-data = pd.read_csv('../../data/time_series_sources/air_quality.csv')
+data = pd.read_csv('../../data/4.time_series_sources/air_quality.csv')
 
 # Inspect data
 print(data.info())
@@ -46,7 +46,7 @@ plt.show()
 print("----------Compare annual stock price trends------------")
 # create dataframe prices here
 prices: DataFrame = pd.DataFrame()
-yahoo: DataFrame = pd.read_csv('../../data/time_series_sources/yahoo_prices.csv',
+yahoo: DataFrame = pd.read_csv('../../data/4.time_series_sources/yahoo_prices.csv',
                                index_col='date', parse_dates=True)
 
 # Select data for each year and concatenate with prices here
@@ -67,7 +67,7 @@ plt.show()
 # how the different frequencies affect the data.
 print("--------Set and change time series frequency-----------")
 
-co = pd.read_csv('../../data/time_series_sources/co_cities.csv', parse_dates=['date'], index_col='date')
+co = pd.read_csv('../../data/4.time_series_sources/co_cities.csv', parse_dates=['date'], index_col='date')
 
 # Inspect data
 print(co.info())
@@ -95,7 +95,7 @@ plt.show()
 print("---------Shifting stock prices across time----------")
 
 # Import data here
-google = pd.read_csv('../../data/time_series_sources/google.csv', parse_dates=['Date'], index_col='Date')
+google = pd.read_csv('../../data/4.time_series_sources/google.csv', parse_dates=['Date'], index_col='Date')
 
 # Set data frequency to business daily
 google = google.asfreq('B')
@@ -162,7 +162,7 @@ plt.show()
 print("----------Compare the performance of several asset classes----------")
 
 # Import data here
-prices = pd.read_csv('../../data/time_series_sources/asset_classes.csv',
+prices = pd.read_csv('../../data/4.time_series_sources/asset_classes.csv',
                      parse_dates=['DATE'], index_col='DATE')
 
 # Inspect prices here
@@ -186,9 +186,9 @@ plt.show()
 
 print("--------Comparing stock prices with a benchmark----------")
 
-stocks = pd.read_csv('../../data/time_series_sources/nyse.csv',
+stocks = pd.read_csv('../../data/4.time_series_sources/nyse.csv',
                      parse_dates=['date'], index_col='date')
-dow_jones = pd.read_csv('../../data/time_series_sources/dow_jones.csv',
+dow_jones = pd.read_csv('../../data/4.time_series_sources/dow_jones.csv',
                         parse_dates=['date'], index_col='date')
 
 # Concatenate stocks and index here
@@ -210,11 +210,11 @@ print("--------Plot performance difference vs benchmark index-----------")
 tickers = ['MSFT', 'AAPL']
 
 # Import stock data here
-stocks = pd.read_csv('../../data/time_series_sources/msft_aapl.csv',
+stocks = pd.read_csv('../../data/4.time_series_sources/msft_aapl.csv',
                      parse_dates=['date'], index_col='date')
 
 # Import index here
-sp500 = pd.read_csv('../../data/time_series_sources/sp500.csv',
+sp500 = pd.read_csv('../../data/4.time_series_sources/sp500.csv',
                     parse_dates=['date'], index_col='date')
 
 # Concatenate stocks and index here
@@ -257,7 +257,7 @@ print(monthly.reindex(weekly_dates, method='ffill'))
 print("-----------Print monthly, re-indexed using weekly_dates-----------")
 
 # Import data here
-data = pd.read_csv('../../data/time_series_sources/unemployment.csv',
+data = pd.read_csv('../../data/4.time_series_sources/unemployment.csv',
                    parse_dates=['date'], index_col='date')
 
 # Show first five rows of weekly series
@@ -280,7 +280,7 @@ plt.show()
 # Compare your previous approach to the new .interpolate() method that you learned about in this video.
 
 # print("---------------------------------") # Import data here monthly = pd.read_csv(
-# '../../data/time_series_sources/monthly_unemployment.csv', parse_dates=['date'], index_col='date')
+# '../../data/4.time_series_sources/monthly_unemployment.csv', parse_dates=['date'], index_col='date')
 #
 # # Inspect data here
 # print(monthly.info())
@@ -305,7 +305,7 @@ plt.show()
 print("-------Interpolate debt/GDP and compare to unemployment----------")
 
 # Import and inspect data here
-data = pd.read_csv('../../data/time_series_sources/debt_unemployment.csv', parse_dates=['date'], index_col='date')
+data = pd.read_csv('../../data/4.time_series_sources/debt_unemployment.csv', parse_dates=['date'], index_col='date')
 print(data.info())
 
 # Interpolate and inspect here
@@ -325,7 +325,7 @@ plt.show()
 print("-------Compare weekly, monthly and annual ozone trends for NYC & LA-------------")
 
 # Import and inspect data here
-ozone = pd.read_csv('../../data/time_series_sources/ozone.csv', parse_dates=['date'], index_col='date')
+ozone = pd.read_csv('../../data/4.time_series_sources/ozone.csv', parse_dates=['date'], index_col='date')
 print(ozone.info())
 
 # Calculate and plot the weekly average ozone trend
@@ -346,7 +346,7 @@ plt.show()
 print("---------Compare monthly average stock prices for Facebook and Google-----------")
 
 # Import and inspect data here
-stocks = pd.read_csv('../../data/time_series_sources/stocks.csv', parse_dates=['date'], index_col='date')
+stocks = pd.read_csv('../../data/4.time_series_sources/stocks.csv', parse_dates=['date'], index_col='date')
 print(stocks.info())
 
 # Calculate and plot the monthly averages
@@ -367,11 +367,11 @@ plt.show()
 print("---------Compare quarterly GDP growth rate and stock returns---------")
 
 # Import and inspect gdp_growth here
-gdp_growth = pd.read_csv('../../data/time_series_sources/gdp_growth.csv', parse_dates=['date'], index_col='date')
+gdp_growth = pd.read_csv('../../data/4.time_series_sources/gdp_growth.csv', parse_dates=['date'], index_col='date')
 print(gdp_growth.info())
 
 # Import and inspect djia here
-djia = pd.read_csv('../../data/time_series_sources/djia.csv', parse_dates=['date'], index_col='date')
+djia = pd.read_csv('../../data/4.time_series_sources/djia.csv', parse_dates=['date'], index_col='date')
 print(djia.info())
 
 # Calculate djia quarterly returns here
@@ -393,7 +393,7 @@ plt.show()
 print("----------Visualize monthly mean, median and standard deviation of S&P500 returns-----------")
 
 # Import data here
-sp500 = pd.read_csv('../../data/time_series_sources/sp500.csv', parse_dates=['date'], index_col='date')
+sp500 = pd.read_csv('../../data/4.time_series_sources/sp500.csv', parse_dates=['date'], index_col='date')
 
 # Calculate daily returns here
 daily_returns = sp500.squeeze().pct_change()
@@ -413,7 +413,7 @@ plt.show()
 print("-----------Rolling average air quality since 2010 for new york city-------------")
 
 # Import and inspect ozone data here
-data = pd.read_csv('../../data/time_series_sources/ozone_2.csv', parse_dates=['date'], index_col='date')
+data = pd.read_csv('../../data/4.time_series_sources/ozone_2.csv', parse_dates=['date'], index_col='date')
 print(data.info())
 
 # Calculate 90d and 360d rolling mean for the last price
@@ -436,7 +436,7 @@ plt.show()
 print("----------- Rolling 360-day median & std. deviation for nyc ozone data since 2000-----------")
 
 # Import and inspect ozone data here
-data = pd.read_csv('../../data/time_series_sources/ozone_2.csv', parse_dates=['date'], index_col='date')
+data = pd.read_csv('../../data/4.time_series_sources/ozone_2.csv', parse_dates=['date'], index_col='date')
 data.dropna(inplace=True)
 
 print(data.info())
@@ -461,7 +461,7 @@ plt.show()
 print("----------Rolling quantiles for daily air quality in nyc------------")
 
 # Resample, interpolate and inspect ozone data here
-data = pd.read_csv('../../data/time_series_sources/ozone_2.csv', parse_dates=['date'], index_col='date')
+data = pd.read_csv('../../data/4.time_series_sources/ozone_2.csv', parse_dates=['date'], index_col='date')
 data = data.resample('D').interpolate()
 print(data.info())
 
@@ -488,7 +488,7 @@ plt.show()
 # print("-----------Cumulative sum vs .diff()-----------")
 #
 # # Import and inspect data here
-# data = pd.read_csv('../../data/time_series_sources/google.csv', parse_dates=['Date'], index_col='Date')
+# data = pd.read_csv('../../data/4.time_series_sources/google.csv', parse_dates=['Date'], index_col='Date')
 # print(google.info())
 #
 # # Calculate differences
@@ -510,7 +510,7 @@ plt.show()
 print("-----------Cumulative return on $1,000 invested in google vs apple I-----------")
 
 # Import and inspect data here
-data = pd.read_csv('../../data/time_series_sources/stocks.csv', parse_dates=['date'], index_col='date')
+data = pd.read_csv('../../data/4.time_series_sources/stocks.csv', parse_dates=['date'], index_col='date')
 print(data.info())
 
 # Define your investment

@@ -96,7 +96,7 @@ print("---------filtering pandas dataframes---------")
 # Use dr, a boolean Series, to subset the cars DataFrame. Store the resulting selection in sel.
 # Print sel, and assert that drives_right is True for all observations.
 
-cars = pd.read_csv('../../data/learning_python_sources/cars.csv', index_col=0)
+cars = pd.read_csv('../../data/1.learning_python_sources/cars.csv', index_col=0)
 dr = cars['drives_right']
 sel = cars[dr]
 print(sel)
@@ -186,7 +186,7 @@ for key, value in europe.items():
 # Loop over Numpy array
 # Import numpy as np
 
-baseball = pd.read_csv("../../data/learning_python_sources/baseball.csv")[['Height', 'Weight']].to_numpy().tolist()
+baseball = pd.read_csv("../../data/1.learning_python_sources/baseball.csv")[['Height', 'Weight']].to_numpy().tolist()
 np_baseball = np.array(baseball)
 
 np_height = np_baseball[:, 0]
@@ -200,7 +200,7 @@ for baseball in np.nditer(np_baseball):
     print(baseball)
 
 # Import cars data
-cars = pd.read_csv('../../data/learning_python_sources/cars.csv', index_col=0)
+cars = pd.read_csv('../../data/1.learning_python_sources/cars.csv', index_col=0)
 
 # Iterate over rows of cars
 for lab, row in cars.iterrows():

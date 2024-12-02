@@ -13,7 +13,7 @@ pd.options.mode.chained_assignment = None
 # 1. Getting to know your data
 
 # 1.1 Import so_survey_csv into so_survey_df
-so_survey_df = pd.read_csv("../../../data/preprocessing_data_sources/Combined_DS_v10.csv")
+so_survey_df = pd.read_csv("../../../data/2.preprocessing_data_sources/Combined_DS_v10.csv")
 
 # 1.2 Print the first five rows of the DataFrame
 print("**********************\nPrint first five rows\n**********************\n", so_survey_df.head(5))
@@ -353,7 +353,7 @@ print("**********************\nPrint trimmed test DataFrame\n*******************
 
 # 1.31 Cleaning up your text
 
-speech_df = pd.read_csv("../../../data/preprocessing_data_sources/inaugural_speeches.csv")
+speech_df = pd.read_csv("../../../data/2.preprocessing_data_sources/inaugural_speeches.csv")
 
 # Print the first 5 rows of the text column
 print("**********************\nPrint first 5 rows of text column\n**********************\n", speech_df['text'].head())

@@ -113,7 +113,7 @@ plt.show()
 # 4. EDA of literacy/fertility data
 
 # Load the data
-fem = pd.read_csv('../../data/stats_thinking_sources/female_literacy_fertility.csv')
+fem = pd.read_csv('../../data/7.stats_thinking_sources/female_literacy_fertility.csv')
 
 # Create arrays for fertility and illiteracy
 illiteracy = 100 - fem['female literacy']
@@ -182,7 +182,7 @@ plt.show()
 # 6. Linear regression on appropriate Anscombe data
 
 # Load the data
-anscombe_df = pd.read_csv('../../data/stats_thinking_sources/anscombes.csv')
+anscombe_df = pd.read_csv('../../data/7.stats_thinking_sources/anscombes.csv')
 
 x = anscombe_df['x']
 y = anscombe_df['y']
@@ -219,7 +219,7 @@ for label, group in anscombe_df.groupby('dataset'):
 
 # 8. Visualizing bootstrap samples
 
-rainfall_df = pd.read_csv('../../data/stats_thinking_sources/sheffield_weather_station.csv')
+rainfall_df = pd.read_csv('../../data/7.stats_thinking_sources/sheffield_weather_station.csv')
 
 rainfall = pd.to_numeric(rainfall_df['rain'], errors='coerce').dropna()
 
@@ -451,7 +451,7 @@ def draw_perm_reps(data_1, data_2, func, size=1):
 # 18. Look before you leap: EDA before hypothesis testing
 
 # Load the data
-frog_df = pd.read_csv('../../data/stats_thinking_sources/frog_tongue.csv')
+frog_df = pd.read_csv('../../data/7.stats_thinking_sources/frog_tongue.csv')
 
 # Make bee swarm plot
 _ = sns.swarmplot(x='ID', y='impact force (mN)', data=frog_df)
@@ -633,7 +633,7 @@ print('p-val of Pearson correlation =', p)
 
 # 25. Do neonicotinoid insecticides have unintended consequences?
 
-bee_df = pd.read_csv('../../data/stats_thinking_sources/bee_sperm.csv')
+bee_df = pd.read_csv('../../data/7.stats_thinking_sources/bee_sperm.csv')
 
 control = bee_df[bee_df['Treatment'] == 'Control']['Alive Sperm Millions']
 treated = bee_df[bee_df['Treatment'] == 'Pesticide']['Alive Sperm Millions']
@@ -683,8 +683,8 @@ print('p-val of bee sperm counts =', p)
 # 27. EDA of beak depths of Darwin's finches
 
 # Load the data
-finch_beaks_1975 = pd.read_csv('../../data/stats_thinking_sources/finch_beaks_1975.csv')
-finch_beaks_2012 = pd.read_csv('../../data/stats_thinking_sources/finch_beaks_2012.csv')
+finch_beaks_1975 = pd.read_csv('../../data/7.stats_thinking_sources/finch_beaks_1975.csv')
+finch_beaks_2012 = pd.read_csv('../../data/7.stats_thinking_sources/finch_beaks_2012.csv')
 
 # Create bee swarm plot
 _ = sns.swarmplot(x='year', y='Beak depth, mm', data=pd.concat([finch_beaks_1975.assign(year=1975),
@@ -849,8 +849,8 @@ print('2012: mean ratio =', mean_ratio_2012, 'conf int =', conf_int_2012)
 # 35. EDA of heritability
 
 # Load the data
-scanden_df = pd.read_csv('../../data/stats_thinking_sources/scandens_beak_depth_heredity.csv')
-fortis_df = pd.read_csv('../../data/stats_thinking_sources/fortis_beak_depth_heredity.csv')
+scanden_df = pd.read_csv('../../data/7.stats_thinking_sources/scandens_beak_depth_heredity.csv')
+fortis_df = pd.read_csv('../../data/7.stats_thinking_sources/fortis_beak_depth_heredity.csv')
 
 bd_offspring_scandens = scanden_df['mid_parent']
 bd_parent_scandens = scanden_df['mid_offspring']

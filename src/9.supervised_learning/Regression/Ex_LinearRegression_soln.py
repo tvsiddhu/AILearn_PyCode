@@ -56,7 +56,7 @@ def main():
     
     # DATA INPUT
     ############
-    file_path = "../../../data/supervised_learning/regression_train.csv"
+    file_path = "../../../data/9.supervised_learning/regression_train.csv"
     input_data = pd.read_csv(file_path, index_col=0)
     display_df_info("Raw Input", input_data)
 

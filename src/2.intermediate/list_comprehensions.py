@@ -122,7 +122,7 @@ for value in get_lengths(lannister):
 # Extract the created_at column from df: tweet_time
 
 
-df = pd.read_csv('../../data/learning_python_sources/tweets.csv')
+df = pd.read_csv('../../data/1.learning_python_sources/tweets.csv')
 tweet_time = df['created_at']
 
 # Extract the clock time: tweet_clock_time
@@ -149,7 +149,7 @@ print(tweet_clock_time)
 #
 
 # Zip lists: zipped_lists
-df = pd.read_csv('../../data/learning_python_sources/world_ind_pop_data.csv')
+df = pd.read_csv('../../data/1.learning_python_sources/world_ind_pop_data.csv')
 feature_names = df.columns
 row_vals = df.values
 zipped_lists = zip(feature_names, row_vals)
@@ -216,7 +216,7 @@ print(df.head())
 #
 
 # Open a connection to the file
-with open('../../data/learning_python_sources/world_ind_pop_data.csv') as file:
+with open('../../data/1.learning_python_sources/world_ind_pop_data.csv') as file:
     # Skip the column names
     file.readline()
 
@@ -282,7 +282,7 @@ def read_large_file(file_object):
 
 
 # Open a connection to the file
-with open('../../data/learning_python_sources/world_ind_pop_data.csv') as file:
+with open('../../data/1.learning_python_sources/world_ind_pop_data.csv') as file:
     # Create a generator object for the file: gen_file
     gen_file = read_large_file(file)
 
@@ -307,7 +307,7 @@ with open('../../data/learning_python_sources/world_ind_pop_data.csv') as file:
 counts_dict = {}
 
 # Open a connection to the file
-with open('../../data/learning_python_sources/world_dev_ind.csv') as file:
+with open('../../data/1.learning_python_sources/world_dev_ind.csv') as file:
     # Create a generator object for the file: gen_file
     gen_file = read_large_file(file)
 
@@ -343,7 +343,7 @@ print(counts_dict)
 # numerous countries and years.
 
 # Initialize reader object: df_reader
-df_reader = pd.read_csv('../../data/learning_python_sources/world_ind_pop_data.csv', chunksize=10)
+df_reader = pd.read_csv('../../data/1.learning_python_sources/world_ind_pop_data.csv', chunksize=10)
 
 # Print two chunks
 print("--------------------------------")
@@ -362,7 +362,7 @@ print(next(df_reader))
 # as pd.
 
 # Initialize reader object: urb_pop_reader
-urb_pop_reader = pd.read_csv('../../data/learning_python_sources/world_ind_pop_data.csv', chunksize=1000)
+urb_pop_reader = pd.read_csv('../../data/1.learning_python_sources/world_ind_pop_data.csv', chunksize=1000)
 
 # Get the first DataFrame chunk: df_urb_pop
 df_urb_pop = next(urb_pop_reader)
@@ -400,7 +400,7 @@ print(pops_list)
 
 
 # Code from previous exercise
-urb_pop_reader = pd.read_csv('../../data/learning_python_sources/world_ind_pop_data.csv', chunksize=1000)
+urb_pop_reader = pd.read_csv('../../data/1.learning_python_sources/world_ind_pop_data.csv', chunksize=1000)
 df_urb_pop = next(urb_pop_reader)
 df_pop_ceb = df_urb_pop[df_urb_pop['CountryCode'] == 'CEB']
 pops = zip(df_pop_ceb['Total Population'], df_pop_ceb['Urban population (% of total)'])
@@ -421,7 +421,7 @@ plt.show()
 # by just working on smaller pieces of it!
 
 # Initialize reader object: urb_pop_reader
-urb_pop_reader = pd.read_csv('../../data/learning_python_sources/world_ind_pop_data.csv', chunksize=1000)
+urb_pop_reader = pd.read_csv('../../data/1.learning_python_sources/world_ind_pop_data.csv', chunksize=1000)
 
 # Initialize empty DataFrame: data
 data = pd.DataFrame()
@@ -499,7 +499,7 @@ def plot_pop(filename, country_code):
 
 
 # Call plot_pop for country code 'CEB'
-plot_pop('../../data/learning_python_sources/world_ind_pop_data.csv', 'CEB')
+plot_pop('../../data/1.learning_python_sources/world_ind_pop_data.csv', 'CEB')
 
 # Call plot_pop for country code 'ARB'
-plot_pop('../../data/learning_python_sources/world_ind_pop_data.csv', 'ARB')
+plot_pop('../../data/1.learning_python_sources/world_ind_pop_data.csv', 'ARB')

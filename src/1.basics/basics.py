@@ -206,7 +206,7 @@ print(type(np_baseball))
 # version of the data.
 
 
-mlb = pd.read_csv("../../data/learning_python_sources/baseball.csv")
+mlb = pd.read_csv("../../data/1.learning_python_sources/baseball.csv")
 
 height_in = mlb['Height'].tolist()
 weight_lb = mlb['Weight'].tolist()
@@ -301,7 +301,7 @@ print(np_height_in[4:8])
 # Print out the type of np_baseball.
 # Print out the shape attribute of np_baseball. Use np_baseball.shape.
 
-baseball = pd.read_csv("../../data/learning_python_sources/baseball.csv")[['Height', 'Weight']].to_numpy().tolist()
+baseball = pd.read_csv("../../data/1.learning_python_sources/baseball.csv")[['Height', 'Weight']].to_numpy().tolist()
 
 np_baseball = np.array(baseball)
 print(type(np_baseball))
@@ -325,9 +325,9 @@ print(np_baseball[123, 0])
 # and weight to metric (meters and kilograms, respectively). As a first step, create a numpy array with three values:
 # 0.0254, 0.453592 and 1. Name this array conversion. Multiply np_baseball with conversion and print out the result.
 
-baseball = pd.read_csv("../../data/learning_python_sources/baseball.csv")[['Height', 'Weight', 'Age']].to_numpy().tolist()
+baseball = pd.read_csv("../../data/1.learning_python_sources/baseball.csv")[['Height', 'Weight', 'Age']].to_numpy().tolist()
 n = len(baseball)
-updated = np.array(pd.read_csv("../../data/learning_python_sources/update.csv", header=None))
+updated = np.array(pd.read_csv("../../data/1.learning_python_sources/update.csv", header=None))
 
 np_baseball = np.array(baseball)
 
@@ -383,7 +383,7 @@ print("Correlation: " + str(corr))
 # their median height. Replace None with the correct code.
 
 # convert heights and positions to numpy arrays: np_heights, np_positions
-fifa = pd.read_csv("../../data/learning_python_sources/fifa.csv", skipinitialspace=True, usecols=['position', 'height'])
+fifa = pd.read_csv("../../data/1.learning_python_sources/fifa.csv", skipinitialspace=True, usecols=['position', 'height'])
 positions = list(fifa.position)
 heights = list(fifa.height)
 

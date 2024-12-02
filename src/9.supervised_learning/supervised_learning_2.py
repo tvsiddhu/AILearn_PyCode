@@ -22,7 +22,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 
 # Load the sales dataset
-sales_df = pd.read_csv('../../data/supervised_learning/advertising_and_sales.csv')
+sales_df = pd.read_csv('../../data/9.supervised_learning/advertising_and_sales.csv')
 
 # Create X from the radio column's values
 X = sales_df["radio"].values
@@ -146,7 +146,7 @@ plt.show()
 # Assessing a diabetes prediction classifier
 
 # Load the diabetes dataset
-diabetes_df = pd.read_csv('../../data/supervised_learning/diabetes_clean.csv')
+diabetes_df = pd.read_csv('../../data/9.supervised_learning/diabetes_clean.csv')
 
 knn = KNeighborsClassifier(n_neighbors=6)
 
@@ -261,7 +261,7 @@ print("Best score is {}".format(logreg_cv.best_score_))
 
 # Processing data
 # load the music dataset
-music_df = pd.read_csv('../../data/supervised_learning/music_clean.csv')
+music_df = pd.read_csv('../../data/9.supervised_learning/music_clean.csv')
 music_dummies = pd.get_dummies(music_df, drop_first=True)
 
 # Print the new dataframe's shape
@@ -302,7 +302,7 @@ print("Standard Deviation of the target array: {}".format(np.std(y)))
 
 # Handling missing data
 # Print the number of missing values in music_df
-music_df = pd.read_csv('../../data/supervised_learning/music_raw.csv')
+music_df = pd.read_csv('../../data/9.supervised_learning/music_raw.csv')
 # Check for missing values in the DataFrame
 missing_values = music_df.isna()
 
@@ -368,7 +368,7 @@ print(classification_report(y_test, y_pred))
 # Instantiate a StandardScaler object
 scaler = StandardScaler()
 
-music_df = pd.read_csv('../../data/supervised_learning/music_clean.csv')
+music_df = pd.read_csv('../../data/9.supervised_learning/music_clean.csv')
 
 X = music_df.drop("loudness", axis=1).values
 y = music_df.loudness.values
@@ -400,7 +400,7 @@ print("Root Mean Squared Error: {}".format(rmse))
 
 # Centering and scaling for classification
 # Build the steps for the pipeline
-music_df = pd.read_csv('../../data/supervised_learning/music_clean.csv')
+music_df = pd.read_csv('../../data/9.supervised_learning/music_clean.csv')
 
 X = music_df.drop("genre", axis=1).values
 y = music_df.genre.values
@@ -428,7 +428,7 @@ print("Tuned Model Score: {}".format(cv.best_score_))
 "----------------------------------------------------------------------------------------------------------------------"
 # Evaluating multiple models
 
-music_df = pd.read_csv('../../data/supervised_learning/music_clean.csv')
+music_df = pd.read_csv('../../data/9.supervised_learning/music_clean.csv')
 
 X = music_df.drop("energy", axis=1).values
 y = music_df.energy.values
@@ -488,7 +488,7 @@ for name, model in models.items():
 "----------------------------------------------------------------------------------------------------------------------"
 # Visualizing classification model performance
 
-music_df = pd.read_csv('../../data/supervised_learning/music_clean.csv')
+music_df = pd.read_csv('../../data/9.supervised_learning/music_clean.csv')
 music_df["popularity"] = music_df["popularity"].apply(lambda x: 1 if x >= music_df["popularity"].median() else 0)
 
 X = music_df.drop("popularity", axis=1).values

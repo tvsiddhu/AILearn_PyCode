@@ -21,7 +21,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 print("Manual feature extraction 1")
 
 # load data
-sales_df = pd.read_csv('../../data/dimensionality_reduction_sources/grocery_sales.csv')
+sales_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/grocery_sales.csv')
 print(sales_df.head())
 
 # Calculate the price from the quantity sold and revenue
@@ -36,7 +36,7 @@ print(reduced_df.head())
 print("Manual feature extraction 2")
 
 # Calculate the mean height
-height_df = pd.read_csv('../../data/dimensionality_reduction_sources/ansur_height_df.csv')
+height_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/ansur_height_df.csv')
 print(height_df.head())
 
 # Calculate the mean height
@@ -50,8 +50,8 @@ print(reduced_df.head())
 # 3. Calculating Principal Components
 print("Calculating Principal Components")
 
-ansur_df_1 = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_Male.csv')
-ansur_df_2 = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_Female.csv')
+ansur_df_1 = pd.read_csv('../../data/8.dimensionality_reduction_sources/ANSUR_II_Male.csv')
+ansur_df_2 = pd.read_csv('../../data/8.dimensionality_reduction_sources/ANSUR_II_Female.csv')
 frames = (ansur_df_1, ansur_df_2)
 ansur_df = pd.concat(frames)
 
@@ -82,7 +82,7 @@ plt.show()
 print("PCA on a larger dataset")
 
 # Enlarge dataset
-ansur_df = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_Female.csv')
+ansur_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/ANSUR_II_Female.csv')
 
 non_numeric = ['Branch', 'Gender', 'Component', 'BMI_class', 'Height_class']
 ansur_df = ansur_df.drop(non_numeric, axis=1)
@@ -119,7 +119,7 @@ Using just 4 principal components we can explain more than 90% of the variance i
 # 6. Understanding the components
 print("Understanding the components")
 
-poke_df = pd.read_csv('../../data/dimensionality_reduction_sources/pokemon.csv')
+poke_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/pokemon.csv')
 
 poke_df = poke_df.drop(['Name', 'Type 1', 'Type 2'], axis=1)
 print(poke_df.head())
@@ -137,7 +137,7 @@ print('PC 2 effects = ' + str(dict(zip(poke_df.columns, vectors[1]))))
 
 # 7. PCA for feature exploration
 print("PCA for feature exploration")
-poke_df = pd.read_csv('../../data/dimensionality_reduction_sources/pokemon.csv')
+poke_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/pokemon.csv')
 
 poke_df = poke_df.drop(['Name', 'Type 1', 'Type 2'], axis=1)
 
@@ -149,10 +149,10 @@ pipe = Pipeline([('scaler', StandardScaler()),
 pc = pipe.fit_transform(poke_df)
 print("Principal Components:", pc)
 
-poke_df = pd.read_csv('../../data/dimensionality_reduction_sources/pokemon.csv')
+poke_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/pokemon.csv')
 poke_df = poke_df.drop(['Name', 'Type 1', 'Type 2', 'Legendary'], axis=1)
 
-poke2 = pd.read_csv('../../data/dimensionality_reduction_sources/pokemon.csv')
+poke2 = pd.read_csv('../../data/8.dimensionality_reduction_sources/pokemon.csv')
 poke2 = poke2.drop(['Name', 'Type 2'], axis=1)
 
 sel_col = ['Type 1', 'Legendary']
@@ -176,10 +176,10 @@ sns.scatterplot(data=poke_cat_df, x='PC 1', y='PC 2', hue='Legendary')
 plt.show()
 
 # 8. PCA in a model pipeline
-poke_df = pd.read_csv('../../data/dimensionality_reduction_sources/pokemon.csv')
+poke_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/pokemon.csv')
 poke_df = poke_df.drop(['Name', 'Type 1', 'Type 2', 'Legendary'], axis=1)
 
-poke2 = pd.read_csv('../../data/dimensionality_reduction_sources/pokemon.csv')
+poke2 = pd.read_csv('../../data/8.dimensionality_reduction_sources/pokemon.csv')
 poke2 = poke2.drop(['Name', 'Type 2'], axis=1)
 sel_col = ['Legendary']
 poke_cat_df = poke2.loc[:, sel_col]
@@ -205,7 +205,7 @@ print('{0:.1%} test set accuracy'.format(accuracy))
 
 # 9. Selecting the proportion of variance to keep
 
-ansur_df = pd.read_csv('../../data/dimensionality_reduction_sources/ANSUR_II_MALE.csv')
+ansur_df = pd.read_csv('../../data/8.dimensionality_reduction_sources/ANSUR_II_MALE.csv')
 
 exclude = ['Branch', 'Component', 'Gender', 'BMI_class', 'Height_class']
 ansur_df = ansur_df.drop(exclude, axis=1)

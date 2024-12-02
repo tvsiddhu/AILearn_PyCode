@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
 # 1. Read the data
-churn_df = pd.read_csv('../../data/supervised_learning/telecom_churn_1.csv')
+churn_df = pd.read_csv('../../data/9.supervised_learning/telecom_churn_1.csv')
 print(churn_df.head())
 
 # 2. Create feature and target arrays

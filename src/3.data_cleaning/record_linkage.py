@@ -14,7 +14,7 @@ from thefuzz import process
 import pandas as pd
 import recordlinkage
 
-restaurants = pd.read_csv('../../data/cleaning_data_sources/cleaning_restaurants_L1.csv')
+restaurants = pd.read_csv('../../data/3.cleaning_data_sources/cleaning_restaurants_L1.csv')
 
 # Store the unique values of cuisine_type in unique_types
 unique_types = restaurants['cuisine_type'].unique()
@@ -90,7 +90,7 @@ print(restaurants['cuisine_type'].unique())
 # In this exercise, you will perform the first step in record linkage and generate possible pairs of rows between
 # restaurants and restaurants_new. Both DataFrames, pandas and recordlinkage are in your environment.
 
-restaurants_new = pd.read_csv('../../data/cleaning_data_sources/cleaning_restaurants_L2_Alt.csv')
+restaurants_new = pd.read_csv('../../data/3.cleaning_data_sources/cleaning_restaurants_L2_Alt.csv')
 # Create an indexer and object and find possible pairs
 indexer = recordlinkage.Index()
 indexer.full()

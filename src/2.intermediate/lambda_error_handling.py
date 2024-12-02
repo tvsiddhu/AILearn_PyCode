@@ -169,7 +169,7 @@ shout_echo("particle", echo=5)
 import pandas as pd
 
 # Import Twitter data as DataFrame: tweets_df
-tweets_df = pd.read_csv('../../data/learning_python_sources/tweets.csv')
+tweets_df = pd.read_csv('../../data/1.learning_python_sources/tweets.csv')
 
 # Select retweets from the Twitter DataFrame: result
 """

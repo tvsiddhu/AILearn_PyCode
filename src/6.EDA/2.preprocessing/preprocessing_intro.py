@@ -15,7 +15,7 @@ from sklearn.decomposition import PCA
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
-volunteer = pd.read_csv('../../../data/preprocessing_data_sources/volunteer_opportunities.csv')
+volunteer = pd.read_csv('../../../data/2.preprocessing_data_sources/volunteer_opportunities.csv')
 print(volunteer.columns)
 print(volunteer.shape)
 print(volunteer.head())
@@ -58,7 +58,7 @@ print(volunteer['category_desc'].value_counts())
 # the model is trained on a sample of data that is representative of the entire dataset. Stratified sampling is a way
 # to achieve this!
 
-volunteer_stratified = pd.read_csv('../../../data/preprocessing_data_sources/volunteer_stratified_sampling.csv')
+volunteer_stratified = pd.read_csv('../../../data/2.preprocessing_data_sources/volunteer_stratified_sampling.csv')
 
 # Create a data with all columns except category_desc
 X = volunteer_stratified.drop('category_desc', axis=1)
@@ -101,7 +101,7 @@ knn.fit(X_train, y_train)
 print(knn.score(X_test, y_test))
 
 # 6. Log normalization
-wine = pd.read_csv('../../../data/preprocessing_data_sources/wine_types.csv')
+wine = pd.read_csv('../../../data/2.preprocessing_data_sources/wine_types.csv')
 
 # Print out the variance of the Proline column
 print("Print out the variance of the Proline column :")
@@ -180,7 +180,7 @@ print(knn.score(X_test_scaled, y_test))
 # so it has two values, Y or N, which need to be encoded into 1's and 0's. Use the scikit-learn LabelEncoder method to
 # perform this transformation.
 
-hiking = pd.read_csv('../../../data/preprocessing_data_sources/hiking.csv')
+hiking = pd.read_csv('../../../data/2.preprocessing_data_sources/hiking.csv')
 
 # Set up the LabelEncoder object
 enc = LabelEncoder()
@@ -207,7 +207,7 @@ print(category_enc.head())
 # similar, related values. Here, you have a DataFrame of running times named running_times_5k. For each name in the
 # dataset, take the mean of their 5 run times.
 
-running_times_5k = pd.read_csv('../../../data/preprocessing_data_sources/running_times_5k.csv')
+running_times_5k = pd.read_csv('../../../data/2.preprocessing_data_sources/running_times_5k.csv')
 
 # Use .loc to create a new column, mean of the 5 columns
 running_times_5k['mean'] = running_times_5k.loc[:, 'run1':'run5'].mean(axis=1)
@@ -327,7 +327,7 @@ print(nb.score(X_test, y_test))
 # the console, you'll see three features which are related to location: locality, region, and postalcode. They
 # contain related information, so it would make sense to keep only one of the features.
 
-volunteer = pd.read_csv('../../../data/preprocessing_data_sources/volunteer_feature_selection.csv')
+volunteer = pd.read_csv('../../../data/2.preprocessing_data_sources/volunteer_feature_selection.csv')
 
 # Create a list of redundant column names to drop
 to_drop = ['category_desc', 'created_date', 'locality', 'region', 'vol_requests']
@@ -346,7 +346,7 @@ print(volunteer_subset.head())
 # coefficient on the dataset to determine which columns are good candidates for eliminating. Then, remove those
 # columns from the DataFrame.
 
-wine = pd.read_csv('../../../data/preprocessing_data_sources/wine_types.csv')
+wine = pd.read_csv('../../../data/2.preprocessing_data_sources/wine_types.csv')
 
 # Print out the column correlations of the wine dataset
 print(wine.corr())
@@ -369,7 +369,7 @@ print(wine.head())
 # the index up to top_n words. Call the function, setting original_vocab=tfidf_vec.vocabulary_,
 # setting vector_index=8 to grab the 9th row, and setting top_n=3, to grab the top 3 weighted words.
 
-volunteer = pd.read_csv('../../../data/preprocessing_data_sources/volunteer_text_vector_1.csv')
+volunteer = pd.read_csv('../../../data/2.preprocessing_data_sources/volunteer_text_vector_1.csv')
 
 vocab = {v: k for k, v in tfidf_vec.vocabulary_.items()}
 

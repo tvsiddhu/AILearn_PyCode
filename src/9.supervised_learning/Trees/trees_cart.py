@@ -16,7 +16,7 @@ from sklearn.tree import DecisionTreeClassifier
 # X = data.data
 # y = data.target
 
-data = pd.read_csv('../../../data/supervised_learning/trees_breast_cancer_wisconsin.csv')
+data = pd.read_csv('../../../data/9.supervised_learning/trees_breast_cancer_wisconsin.csv')
 
 # Create feature and target arrays
 X = data.drop('diagnosis', axis=1).iloc[:, :2].values
@@ -117,7 +117,7 @@ print('Accuracy achieved by using the gini index: ', acc)
 from sklearn.tree import DecisionTreeRegressor
 
 # Import the auto-mpg dataset
-data = pd.read_csv('../../../data/supervised_learning/trees-auto-mpg.csv')
+data = pd.read_csv('../../../data/9.supervised_learning/trees-auto-mpg.csv')
 
 # Convert categorical data to numerical data
 data = pd.get_dummies(data, drop_first=True)
@@ -226,7 +226,7 @@ print('Train RMSE: {:.2f}'.format(RMSE_train))
 from sklearn.neighbors import KNeighborsClassifier as KNN
 
 # import the indian liver patient dataset
-data = pd.read_csv('../../../data/supervised_learning/trees_indian_liver_patient.csv')
+data = pd.read_csv('../../../data/9.supervised_learning/trees_indian_liver_patient.csv')
 
 # Convert categorical data to numerical data
 data = pd.get_dummies(data, drop_first=True)
@@ -329,7 +329,7 @@ bc = BaggingClassifier(estimator=dt, n_estimators=50, random_state=1, oob_score=
 # OOB Score vs Test Set Score
 
 # import the indian liver patient dataset
-data = pd.read_csv('../../../data/supervised_learning/trees_indian_liver_patient.csv')
+data = pd.read_csv('../../../data/9.supervised_learning/trees_indian_liver_patient.csv')
 
 # Convert categorical data to numerical data
 data = pd.get_dummies(data, drop_first=True)
@@ -369,7 +369,7 @@ print('Test set accuracy: {:.3f}, OOB accuracy: {:.3f}'.format(acc_test, acc_oob
 from sklearn.ensemble import RandomForestRegressor
 
 # Load the bike dataset
-data = pd.read_csv('../../../data/supervised_learning/trees_bikes.csv')
+data = pd.read_csv('../../../data/9.supervised_learning/trees_bikes.csv')
 
 # Create feature and target arrays
 X = data.drop('cnt', axis=1).values
@@ -415,7 +415,7 @@ plt.show()
 from sklearn.ensemble import AdaBoostClassifier
 
 # load the Indian Liver Patient dataset
-data = pd.read_csv('../../../data/supervised_learning/trees_indian_liver_patient.csv')
+data = pd.read_csv('../../../data/9.supervised_learning/trees_indian_liver_patient.csv')
 
 # Convert categorical data to numerical data
 data = pd.get_dummies(data, drop_first=True)
@@ -458,7 +458,7 @@ print('ROC AUC score: {:.2f}'.format(ada_roc_auc))
 from sklearn.ensemble import GradientBoostingRegressor
 
 # Load the bike dataset
-data = pd.read_csv('../../../data/supervised_learning/trees_bikes.csv')
+data = pd.read_csv('../../../data/9.supervised_learning/trees_bikes.csv')
 
 # Create feature and target arrays
 X = data.drop('cnt', axis=1).values
@@ -494,7 +494,7 @@ print('Test set RMSE of gb: {:.3f}'.format(rmse_test))
 from sklearn.ensemble import GradientBoostingRegressor
 
 # Load the bike dataset
-data = pd.read_csv('../../../data/supervised_learning/trees_bikes.csv')
+data = pd.read_csv('../../../data/9.supervised_learning/trees_bikes.csv')
 
 # Create feature and target arrays
 X = data.drop('cnt', axis=1).values
@@ -530,7 +530,7 @@ print('Test set RMSE of sgbr: {:.3f}'.format(rmse_test))
 from sklearn.model_selection import GridSearchCV
 
 # Load the Indian Liver Patient dataset
-data = pd.read_csv('../../../data/supervised_learning/trees_indian_liver_patient.csv')
+data = pd.read_csv('../../../data/9.supervised_learning/trees_indian_liver_patient.csv')
 
 # Convert categorical data to numerical data
 data = pd.get_dummies(data, drop_first=True)
@@ -578,7 +578,7 @@ print('Test set ROC AUC score: {:.3f}'.format(test_roc_auc))
 # ---------------------------------------------------------------------------------------------------------------------
 # Tuning a RF's hyperparameters
 # Load the bike dataset
-data = pd.read_csv('../../../data/supervised_learning/trees_bikes.csv')
+data = pd.read_csv('../../../data/9.supervised_learning/trees_bikes.csv')
 
 # Create feature and target arrays
 X = data.drop('cnt', axis=1).values

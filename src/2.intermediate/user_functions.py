@@ -99,7 +99,7 @@ print(yell2)
 
 
 # Import Twitter data as DataFrame: df
-df = pd.read_csv('../../data/learning_python_sources/tweets.csv')
+df = pd.read_csv('../../data/1.learning_python_sources/tweets.csv')
 
 # Initialize an empty dictionary: langs_count
 langs_count = {}
@@ -433,7 +433,7 @@ report_status(name="anakin", affiliation="sith lord", status="deceased")
 
 
 # Import Twitter data as DataFrame: df
-tweets_df = pd.read_csv('../../data/learning_python_sources/tweets.csv')
+tweets_df = pd.read_csv('../../data/1.learning_python_sources/tweets.csv')
 
 
 # Define count_entries()

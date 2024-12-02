@@ -54,7 +54,7 @@ plt.show()
 # # Convert random_walk to a pd.Series and reassign it to itself.
 # # Use sns.distplot() to plot the distribution of random_walk.
 #
-# fb = pd.read_csv('../../data/time_series_sources/fb.csv', index_col='date', parse_dates=True)
+# fb = pd.read_csv('../../data/4.time_series_sources/fb.csv', index_col='date', parse_dates=True)
 # # set seed (Instruction 1)
 # seed(42)
 #
@@ -119,7 +119,7 @@ plt.show()
 # correlations as an annotated sns.heatmap()
 
 # Inspect data here
-data = pd.read_csv('../../data/time_series_sources/five_stocks_data.csv', index_col='Date', parse_dates=True)
+data = pd.read_csv('../../data/4.time_series_sources/five_stocks_data.csv', index_col='Date', parse_dates=True)
 print(data.info())
 
 # Calculate year-end prices here
@@ -154,7 +154,7 @@ plt.show()
 # Show the number of companies per 'Sector' using .groupby() and .size(). Sort the output in descending order.
 
 # Inspect listings (Instruction 1)
-listings = pd.read_csv('../../data/time_series_sources/listings_1.csv')
+listings = pd.read_csv('../../data/4.time_series_sources/listings_1.csv')
 print(listings.info())
 
 # Move 'Stock Symbol' into the index (Instruction 2)
@@ -186,7 +186,7 @@ print(listings.groupby('Sector').size().sort_values(ascending=False))
 # the column names Company Name, Market Capitalization, and Last Sale. Next, use .loc[] with tickers and info_cols to
 # print() more details about the listings sorted in descending order by Market Capitalization.
 
-listings = pd.read_csv('../../data/time_series_sources/listings_2.csv', index_col=0)
+listings = pd.read_csv('../../data/4.time_series_sources/listings_2.csv', index_col=0)
 
 # Select largest company for each sector (Instruction 1)
 components = listings.groupby('Sector')['Market Capitalization'].nlargest(1).sort_values(ascending=False)
@@ -220,7 +220,7 @@ tickers = ['RIO', 'ILMN', 'CPRT', 'EL', 'AMZN', 'PAA', 'GS', 'AMGN', 'MA', 'TEF'
 print(tickers)
 
 # Import stock prices and inspect the result (Instruction 2)
-stock_prices = pd.read_csv('../../data/time_series_sources/stock_prices.csv', parse_dates=['Date'], index_col='Date')
+stock_prices = pd.read_csv('../../data/4.time_series_sources/stock_prices.csv', parse_dates=['Date'], index_col='Date')
 print(stock_prices.info())
 
 # Calculate the returns (Instruction 3)
@@ -347,7 +347,7 @@ plt.show()
 data = pd.DataFrame(index=index.index, data={'Index': index})
 
 # Normalize djia series and add as new column to data
-djia = pd.read_csv('../../data/time_series_sources/djia.csv', parse_dates=['date'], index_col='date')
+djia = pd.read_csv('../../data/4.time_series_sources/djia.csv', parse_dates=['date'], index_col='date')
 data['DJIA'] = djia.div(djia.iloc[0]).mul(100)
 
 # Show total return for both index and djia
@@ -445,7 +445,7 @@ print(data.info())
 returns = data.pct_change()
 
 # Export data and returns to excel
-with pd.ExcelWriter('../../data/time_series_sources/index_data.xlsx') as writer:
+with pd.ExcelWriter('../../data/4.time_series_sources/index_data.xlsx') as writer:
     data.to_excel(writer, sheet_name='data')
     returns.to_excel(writer, sheet_name='returns')
     

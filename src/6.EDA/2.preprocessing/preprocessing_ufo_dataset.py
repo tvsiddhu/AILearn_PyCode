@@ -9,7 +9,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 import preprocessing_intro as pi
 
-ufo = pd.read_csv('../../../data/preprocessing_data_sources/ufo_sightings_large.csv')
+ufo = pd.read_csv('../../../data/2.preprocessing_data_sources/ufo_sightings_large.csv')
 
 # Print the DataFrame info
 print("Info:\n", ufo.info())

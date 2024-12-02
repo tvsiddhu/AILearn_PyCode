@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 
 # Load the dataset
-banking = pd.read_csv('../../data/cleaning_data_sources/banking_funds.csv')
+banking = pd.read_csv('../../data/3.cleaning_data_sources/banking_funds.csv')
 
 # Find values of acct_cur that are equal to 'euro'
 acct_eu = banking['acct_cur'] == 'euro'

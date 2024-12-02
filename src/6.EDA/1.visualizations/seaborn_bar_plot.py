@@ -10,7 +10,7 @@ import seaborn as sns
 # We've created a list of data from this dataset to get you started. birth_rate is a list that contains the birth
 # rate of each country. The birth rate is the number of births per 1,000 people in a year.
 # Read the data from the csv file
-df = pd.read_csv('../../../data/eda_data_sources/countries-of-the-world.csv')
+df = pd.read_csv('../../../data/6. eda_data_sources/countries-of-the-world.csv')
 gdp = df['GDP ($ per capita)']
 phones = df['Phones (per 1000)']
 percent_literate = df['Literacy (%)']
@@ -28,7 +28,7 @@ plt.show()
 # the survey and determine whether it is tidy, which is essential to having it work well with Seaborn.
 
 # Read the data from the csv file
-df = pd.read_csv('../../../data/eda_data_sources/animals.csv')
+df = pd.read_csv('../../../data/6. eda_data_sources/animals.csv')
 
 # Print the head of the data
 print(df.head())
@@ -40,7 +40,7 @@ print(df.head())
 # "Strongly agree".
 #
 
-df = pd.read_csv('../../../data/eda_data_sources/young-people-survey-responses.csv')
+df = pd.read_csv('../../../data/6. eda_data_sources/young-people-survey-responses.csv')
 # Create a count plot with "Spiders" on the x-axis
 sns.countplot(x='Spiders', data=df)
 
@@ -53,7 +53,7 @@ plt.show()
 # location subgroups green and blue.
 
 # Import student data
-student_data = pd.read_csv('../../../data/eda_data_sources/student-alcohol-consumption.csv')
+student_data = pd.read_csv('../../../data/6. eda_data_sources/student-alcohol-consumption.csv')
 
 # Create a dictionary mapping subgroup values to colors
 palette_colors = {"Rural": "green", "Urban": "blue"}
@@ -77,7 +77,7 @@ plt.show()
 # Use the survey_data DataFrame and sns.catplot() to create a bar plot with "Gender" on the x-axis and "Interested in
 # Math" on the y-axis.
 
-survey_data = pd.read_csv('../../../data/eda_data_sources/young-people-survey-responses-math.csv')
+survey_data = pd.read_csv('../../../data/6. eda_data_sources/young-people-survey-responses-math.csv')
 
 # Create a bar plot of interest in math, separated by gender
 sns.catplot(x="Gender", y="Interested in Math", data=survey_data, kind="bar")
@@ -92,7 +92,7 @@ plt.show()
 # better final grades? Let's compare the average final grade among students in each category using a bar plot.
 
 # Import student data
-student_data = pd.read_csv('../../../data/eda_data_sources/student-alcohol-consumption.csv')
+student_data = pd.read_csv('../../../data/6. eda_data_sources/student-alcohol-consumption.csv')
 
 # Create a bar plot of average final grade in each study category
 sns.catplot(x="study_time", y="G3", data=student_data, kind="bar")

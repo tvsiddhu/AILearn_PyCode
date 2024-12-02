@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 # Print the head of the homelessness data
 
 pd.set_option('display.max_columns', 10)
-homelessness = pd.read_csv('../../data/panda_data_manipulation_sources/homelessness.csv')
+homelessness = pd.read_csv('../../data/5.panda_data_manipulation_sources/homelessness.csv')
 print(homelessness.head())
 
 # Print information about homelessness
@@ -179,7 +179,7 @@ print(result)
 # statistics allows you to get a better sense of your data, even if there's a lot of it.
 
 # Print the head of the sales DataFrame
-sales = pd.read_csv('../../data/panda_data_manipulation_sources/sales_subset.csv')
+sales = pd.read_csv('../../data/5.panda_data_manipulation_sources/sales_subset.csv')
 print(sales.head())
 
 # Print the info about the sales DataFrame
@@ -417,7 +417,7 @@ print(sales.pivot_table(index='department', columns='type', values='weekly_sales
 # In this chapter, you'll be exploring temperatures, a DataFrame of average temperatures in cities around the world.
 
 # Look at temperatures
-temperatures = pd.read_csv('../../data/panda_data_manipulation_sources/temperatures.csv', parse_dates=['date'],
+temperatures = pd.read_csv('../../data/5.panda_data_manipulation_sources/temperatures.csv', parse_dates=['date'],
                            encoding='utf-8-sig')
 print(temperatures)
 
@@ -621,7 +621,7 @@ print(mean_temp_by_city[mean_temp_by_city == mean_temp_by_city.min()])
 # but you'll often have to manipulate your data first in order to get the numbers you need for plotting.
 
 # Look at the first few rows of data
-avocados = pd.read_csv('../../data/panda_data_manipulation_sources/avocados.csv')
+avocados = pd.read_csv('../../data/5.panda_data_manipulation_sources/avocados.csv')
 print(avocados.head())
 
 # Get the total number of avocados sold of each size
@@ -711,7 +711,7 @@ plt.show()
 # where your missing values are, or if they exist, you could make mistakes in your analysis. In this exercise,
 # you'll determine if there are missing values in the dataset, and if so, how many.
 
-avocados_2016 = pd.read_csv('../../data/panda_data_manipulation_sources/avocados_2016.csv')
+avocados_2016 = pd.read_csv('../../data/5.panda_data_manipulation_sources/avocados_2016.csv')
 print(avocados_2016.head())
 
 # Check individual values for missing values
@@ -809,7 +809,7 @@ print(avocados_2019)
 # you'll need to get the CSV into a pandas DataFrame and do some manipulation!
 
 # Read CSV as DataFrame called airline_bumping
-airline_bumping = pd.read_csv('../../data/panda_data_manipulation_sources/airline_bumping.csv')
+airline_bumping = pd.read_csv('../../data/5.panda_data_manipulation_sources/airline_bumping.csv')
 
 # Take a look at the DataFrame
 print(airline_bumping.head())
@@ -840,7 +840,7 @@ airline_totals_sorted = airline_totals.sort_values('bumps_per_10k', ascending=Fa
 print(airline_totals_sorted)
 
 # Save as airline_totals_sorted.csv
-airline_totals_sorted.to_csv('../../data/panda_data_manipulation_sources/airline_totals_sorted.csv')
+airline_totals_sorted.to_csv('../../data/5.panda_data_manipulation_sources/airline_totals_sorted.csv')
 
 # 29. Quiz.
 # You are working as a Data Scientist in an organization focusing on global health. Your manager has asked

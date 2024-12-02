@@ -170,7 +170,7 @@ print(result2 == powers)
 counts_dict = {}
 
 # Iterate over the file chunk by chunk
-for chunk in pd.read_csv('../../data/learning_python_sources/tweets.csv', chunksize=10):
+for chunk in pd.read_csv('../../data/1.learning_python_sources/tweets.csv', chunksize=10):
     # Iterate over the column in DataFrame
     for entry in chunk['lang']:
         if entry in counts_dict.keys():
@@ -201,7 +201,7 @@ def count_entries(csv_file, c_size, colname):
     return counts_dict
 
 # Call count_entries(): result_counts
-result_counts = count_entries('../../data/learning_python_sources/tweets.csv', 10, 'lang')
+result_counts = count_entries('../../data/1.learning_python_sources/tweets.csv', 10, 'lang')
 
 # Print result_counts
 print("------")

@@ -1,7 +1,7 @@
 import pandas as pd
 import datetime as dt
 
-ride_sharing = pd.read_csv('../../data/cleaning_data_sources/ride_sharing_tire_sizes.csv')
+ride_sharing = pd.read_csv('../../data/3.cleaning_data_sources/ride_sharing_tire_sizes.csv')
 
 # Print the information of ride_sharing
 print(ride_sharing.info())

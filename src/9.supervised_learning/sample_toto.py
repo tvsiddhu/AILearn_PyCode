@@ -4,7 +4,7 @@ import pandas as pd
 import seaborn as sns
 
 # Load the results dataset
-toto_df = pd.read_csv('../../data/supervised_learning/toto_numbers_dates.csv')
+toto_df = pd.read_csv('../../data/9.supervised_learning/toto_numbers_dates.csv')
 
 # Drop 'Draw' and 'Date' columns
 toto_df = toto_df.drop(columns=['Draw', 'Date'])
