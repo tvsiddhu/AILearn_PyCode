@@ -662,11 +662,13 @@ plt.show()
 # How many clusters of grain?
 
 # Load the grain data
-seed_data = pd.read_csv('../../../data/10.unsupervised_learning/seeds.csv', header=None, names=['area','perimeter','compactness','lengthOfKernel','widthOfKernel','asymmetryCoefficient','lengthOfKernelGroove','seedType'])
+seed_data = pd.read_csv('../../../data/10.unsupervised_learning/seeds.csv', header=None,
+                        names=['area', 'perimeter', 'compactness', 'lengthOfKernel', 'widthOfKernel',
+                               'asymmetryCoefficient', 'lengthOfKernelGroove', 'seedType'])
 print(seed_data.head())
 
 # Create a numpy array of the features: samples
-samples = seed_data.drop(columns=seed_data.columns[-1]).values
+seed_samples = seed_data.drop(columns=seed_data.columns[-1]).values
 
 # Create a KMeans model with 3 clusters: model
 ks = range(1, 6)
@@ -674,7 +676,7 @@ inertias = []
 
 for k in ks:
     model = KMeans(n_clusters=k)
-    model.fit(samples)
+    model.fit(seed_samples)
     inertias.append(model.inertia_)
 
 # Plot ks vs inertias
@@ -691,13 +693,13 @@ varieties = seed_data.iloc[:, -1].values
 model = KMeans(n_clusters=3)
 
 # Use fit_predict to fit model and obtain cluster labels: labels
-labels = model.fit_predict(samples)
+labels = model.fit_predict(seed_samples)
 
 # Create a DataFrame with labels and varieties as columns: df
-df = pd.DataFrame({'labels': labels, 'varieties': varieties})
+seed_df = pd.DataFrame({'labels': labels, 'varieties': varieties})
 
 # Create crosstab: ct
-ct = pd.crosstab(df['labels'], df['varieties'])
+ct = pd.crosstab(seed_df['labels'], seed_df['varieties'])
 
 # Display ct
 print(ct)
@@ -714,7 +716,7 @@ fish_data = pd.read_csv('../../../data/10.unsupervised_learning/fish.csv')
 print(fish_data.head())
 
 # Create a numpy array of the features: samples
-samples = fish_data.drop(columns=fish_data.columns[0]).values
+fish_samples = fish_data.drop(columns=fish_data.columns[0]).values
 
 # Perform the necessary imports
 from sklearn.pipeline import make_pipeline
@@ -731,17 +733,17 @@ pipeline = make_pipeline(scaler, kmeans)
 
 # Clustering the fish data
 # Fit the pipeline to samples
-pipeline.fit(samples)
+pipeline.fit(fish_samples)
 
 # Calculate the cluster labels: labels
-labels = pipeline.predict(samples)
+labels = pipeline.predict(fish_samples)
 species = fish_data.iloc[:, 0].values
 
 # Create a DataFrame with labels and species as columns: df
-df = pd.DataFrame({'labels': labels, 'species': fish_data.iloc[:, 0]})
+fish_df = pd.DataFrame({'labels': labels, 'species': fish_data.iloc[:, 0]})
 
 # Create crosstab: ct
-ct = pd.crosstab(df['labels'], df['species'])
+ct = pd.crosstab(fish_df['labels'], fish_df['species'])
 
 # Display ct
 print(ct)
@@ -777,21 +779,17 @@ pipeline.fit(movements)
 labels = pipeline.predict(movements)
 
 # Create a DataFrame aligning labels and companies: df
-df = pd.DataFrame({'labels': labels, 'companies': companies})
+company_df = pd.DataFrame({'labels': labels, 'companies': companies})
 
 # Display df sorted by cluster label
-print(df.sort_values('labels'))
+print(company_df.sort_values('labels'))
 
 # 6. Hierarchical clustering of the grain data
 # Perform the necessary imports
 from scipy.cluster.hierarchy import linkage, dendrogram
 
-
-samples = seed_data.drop(columns=seed_data.columns[-1]).values
-varieties = seed_data.iloc[:, -1].values
-
 # Calculate the linkage: mergings
-mergings = linkage(samples, method='complete')
+mergings = linkage(seed_samples, method='complete')
 
 # Plot the dendrogram, using varieties as labels
 dendrogram(mergings,
@@ -822,18 +820,136 @@ from scipy.cluster.hierarchy import fcluster
 
 # Load the data
 song_data = pd.read_csv('../../../data/10.unsupervised_learning/songs.csv')
-country_names = ['Albania', 'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Belarus', 'Belgium', 'Bosnia & Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'F.Y.R. Macedonia', 'Finland', 'France', 'Georgia', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Israel', 'Italy', 'Latvia', 'Lithuania', 'Malta', 'Moldova', 'Montenegro', 'Norway', 'Poland', 'Russia', 'San Marino', 'Serbia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'The Netherlands', 'Ukraine', 'United Kingdom']
-
+country_names = ['Albania', 'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Belarus', 'Belgium',
+                 'Bosnia & Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia',
+                 'F.Y.R. Macedonia', 'Finland', 'France', 'Georgia', 'Germany', 'Greece', 'Hungary', 'Iceland',
+                 'Ireland', 'Israel', 'Italy', 'Latvia', 'Lithuania', 'Malta', 'Moldova', 'Montenegro', 'Norway',
+                 'Poland', 'Russia', 'San Marino', 'Serbia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland',
+                 'The Netherlands', 'Ukraine', 'United Kingdom']
 
 # Create a numpy array of the features: samples
 # Ensure samples contain only finite values
-samples = song_data.drop(columns=song_data.columns[0]).values
+song_samples = song_data.drop(columns=song_data.columns[0]).values
 
 # Calculate the linkage: mergings
-mergings = linkage(samples, method='single')
+mergings = linkage(song_samples, method='single')
 
 # Plot the dendrogram
 dendrogram(mergings, labels=country_names, leaf_rotation=90, leaf_font_size=6)
 plt.show()
 
-# Extracting the cluster labels
+# 9. Extracting the cluster labels (from grain samples)
+# Use fcluster to extract labels: labels
+labels = fcluster(mergings, 6, criterion='distance')
+
+# Create a DataFrame with labels and varieties as columns: df
+# seed_df = pd.DataFrame({'labels': labels, 'varieties' : varieties})
+
+# Create crosstab: ct
+ct = pd.crosstab(seed_df['labels'], seed_df['varieties'])
+
+# Display ct
+print(ct)
+
+# 10. t-SNE visualization of grain dataset
+# Perform the necessary imports
+from sklearn.manifold import TSNE
+
+seed_variety_numbers = seed_data.iloc[:, -1].values
+print("variety_numbers: ", seed_variety_numbers)
+
+# Create a TSNE instance: model
+model = TSNE(learning_rate=200)
+
+# Apply fit_transform to samples: tsne_features
+tsne_features = model.fit_transform(seed_samples)
+
+# Select the 0th feature: xs
+xs = tsne_features[:, 0]
+
+# Select the 1st feature: ys
+ys = tsne_features[:, 1]
+
+# Scatter plot, coloring by variety_numbers
+plt.scatter(xs, ys, c=seed_variety_numbers)
+plt.show()
+
+# 11. A t-SNE map of the stock market
+# Import TSNE
+from sklearn.manifold import TSNE
+
+# Create a TSNE instance: model
+model = TSNE(learning_rate=50)
+
+# Apply fit_transform to normalized_movements: tsne_features
+tsne_features = model.fit_transform(normalized_movements)
+
+# Select the 0th feature: xs
+xs = tsne_features[:, 0]
+
+# Select the 1st feature: ys
+ys = tsne_features[:, 1]
+
+# Scatter plot
+plt.scatter(xs, ys, alpha=0.5)
+
+# Annotate the points
+for x, y, company in zip(xs, ys, companies):
+    plt.annotate(company, (x, y), fontsize=5, alpha=0.75)
+plt.show()
+
+# 12. Correlated data in nature
+# Perform the necessary imports
+from scipy.stats import pearsonr
+
+# Use grains array provided
+
+grains = [[3.312, 5.763], [3.333, 5.554], [3.337, 5.291], [3.379, 5.324], [3.562, 5.658], [3.312, 5.386],
+          [3.259, 5.563], [3.302, 5.42], [3.465, 6.053], [3.505, 5.884], [3.242, 5.714], [3.201, 5.438], [3.199, 5.439],
+          [3.156, 5.479], [3.114, 5.482], [3.333, 5.351], [3.383, 5.119], [3.514, 5.527], [3.466, 5.205],
+          [3.049, 5.226], [3.129, 5.658], [3.168, 5.52], [3.507, 5.618], [2.936, 5.099], [3.245, 5.789], [3.421, 5.833],
+          [3.026, 5.395], [2.956, 5.395], [3.221, 5.541], [3.065, 5.516], [2.975, 5.454], [3.371, 5.757],
+          [3.186, 5.717], [3.15, 5.585], [3.328, 5.712], [3.485, 5.709], [3.464, 5.826], [3.683, 5.832], [3.288, 5.656],
+          [3.298, 5.397], [3.156, 5.348], [3.158, 5.351], [3.201, 5.138], [3.396, 5.877], [3.462, 5.579],
+          [3.155, 5.376], [3.393, 5.701], [3.377, 5.57], [3.291, 5.545], [3.258, 5.678], [3.272, 5.585], [3.434, 5.674],
+          [3.113, 5.715], [3.199, 5.504], [3.113, 5.741], [3.212, 5.702], [3.377, 5.388], [3.412, 5.384],
+          [3.419, 5.662], [3.032, 5.159], [2.85, 5.008], [2.879, 4.902], [3.042, 5.076], [3.07, 5.395], [3.026, 5.262],
+          [3.119, 5.139], [3.19, 5.63], [3.158, 5.609], [3.153, 5.569], [2.882, 5.412], [3.561, 6.191], [3.484, 5.998],
+          [3.594, 5.978], [3.93, 6.154], [3.486, 6.017], [3.438, 5.927], [3.403, 6.064], [3.814, 6.579], [3.639, 6.445],
+          [3.566, 5.85], [3.467, 5.875], [3.857, 6.006], [3.864, 6.285], [3.772, 6.384], [3.801, 6.366], [3.651, 6.173],
+          [3.764, 6.084], [3.67, 6.549], [4.033, 6.573], [4.032, 6.45], [3.785, 6.581], [3.796, 6.172], [3.693, 6.272],
+          [3.86, 6.037], [3.485, 6.666], [3.463, 6.139], [3.81, 6.341], [3.552, 6.449], [3.512, 6.271], [3.684, 6.219],
+          [3.525, 5.718], [3.694, 5.89], [3.892, 6.113], [3.681, 6.369], [3.755, 6.248], [3.786, 6.037], [3.806, 6.152],
+          [3.573, 6.033], [3.763, 6.675], [3.674, 6.153], [3.769, 6.107], [3.791, 6.303], [3.902, 6.183],
+          [3.737, 6.259], [3.991, 6.563], [3.719, 6.416], [3.897, 6.051], [3.815, 6.245], [3.769, 6.227],
+          [3.857, 6.493], [3.962, 6.315], [3.563, 6.059], [3.387, 5.762], [3.771, 5.98], [3.582, 5.363], [3.869, 6.111],
+          [3.594, 6.285], [3.687, 5.979], [3.773, 6.513], [3.69, 5.791], [3.755, 5.979], [3.825, 6.144], [3.268, 5.884],
+          [3.395, 5.845], [3.408, 5.776], [3.465, 5.477], [3.574, 6.145], [3.231, 5.92], [3.286, 5.832], [3.472, 5.872],
+          [2.994, 5.472], [3.073, 5.541], [3.074, 5.389], [2.967, 5.224], [2.777, 5.314], [2.687, 5.279],
+          [2.719, 5.176], [2.967, 5.267], [2.911, 5.386], [2.648, 5.317], [2.84, 5.263], [2.776, 5.405], [2.833, 5.408],
+          [2.693, 5.22], [2.755, 5.175], [2.675, 5.25], [2.849, 5.053], [2.745, 5.394], [2.678, 5.444], [2.695, 5.304],
+          [2.879, 5.451], [2.81, 5.35], [2.847, 5.267], [2.968, 5.333], [2.794, 5.011], [2.941, 5.105], [2.897, 5.319],
+          [2.837, 5.417], [2.668, 5.176], [2.715, 5.09], [2.701, 5.325], [2.845, 5.167], [2.763, 5.088], [2.763, 5.136],
+          [2.641, 5.278], [2.821, 4.981], [2.71, 5.186], [2.642, 5.145], [2.758, 5.18], [2.893, 5.357], [2.775, 5.09],
+          [3.017, 5.236], [2.909, 5.24], [2.85, 5.108], [3.026, 5.495], [2.683, 5.363], [2.716, 5.413], [2.675, 5.088],
+          [2.821, 5.089], [2.787, 4.899], [2.717, 5.046], [2.804, 5.091], [2.953, 5.132], [2.63, 5.18], [2.975, 5.236],
+          [3.126, 5.16], [3.054, 5.224], [3.128, 5.32], [2.911, 5.41], [3.155, 5.073], [2.989, 5.219], [3.135, 4.984],
+          [2.81, 5.009], [3.091, 5.183], [2.96, 5.204], [2.981, 5.137], [2.795, 5.14], [3.232, 5.236], [2.836, 5.175],
+          [2.974, 5.243]]
+
+# Assign the 0th column of grains: width
+width = [grain[0] for grain in grains]
+
+# Assign the 1st column of grains: length
+length = [grain[1] for grain in grains]
+
+# Scatter plot
+plt.scatter(width, length)
+plt.axis('equal')
+plt.show()
+
+# Calculate the Pearson correlation
+correlation, pvalue = pearsonr(width, length)
+
+# Display the correlation
+print(correlation)
