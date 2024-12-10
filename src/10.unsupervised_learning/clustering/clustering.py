@@ -7,6 +7,19 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy.cluster.hierarchy import fcluster
+from scipy.cluster.hierarchy import linkage, dendrogram
+from scipy.sparse import csr_matrix
+from scipy.stats import pearsonr
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from sklearn.decomposition import TruncatedSVD
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.manifold import TSNE
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import normalize
 
 # create an array of points
 points = np.array([[0.06544649, -0.76866376],
@@ -324,8 +337,6 @@ plt.show()
 
 # 2. Clustering 2D points
 
-# Import KMeans
-from sklearn.cluster import KMeans
 
 new_points = np.array([[4.00233332e-01, -1.26544471e+00],
                        [8.03230370e-01, 1.28260167e+00],
@@ -718,10 +729,6 @@ print(fish_data.head())
 # Create a numpy array of the features: samples
 fish_samples = fish_data.drop(columns=fish_data.columns[0]).values
 
-# Perform the necessary imports
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-
 # Create scaler: scaler
 scaler = StandardScaler()
 
@@ -760,8 +767,6 @@ print(stock_data.head())
 # Create a numpy array of the stock movements: movements
 movements = stock_data.drop(columns=stock_data.columns[0]).values
 companies = stock_data.iloc[:, 0].values
-# Import Normalizer
-from sklearn.preprocessing import Normalizer
 
 # Create a normalizer: normalizer
 normalizer = Normalizer()
@@ -786,7 +791,7 @@ print(company_df.sort_values('labels'))
 
 # 6. Hierarchical clustering of the grain data
 # Perform the necessary imports
-from scipy.cluster.hierarchy import linkage, dendrogram
+
 
 # Calculate the linkage: mergings
 mergings = linkage(seed_samples, method='complete')
@@ -800,8 +805,7 @@ dendrogram(mergings,
 plt.show()
 
 # 7. Hierarchies of stocks
-# Import normalize
-from sklearn.preprocessing import normalize
+
 
 # Normalize the movements: normalized_movements
 normalized_movements = normalize(movements)
@@ -815,8 +819,7 @@ dendrogram(mergings, labels=companies, leaf_rotation=90, leaf_font_size=6)
 plt.show()
 
 # 8. Extracting the cluster labels
-# Perform the necessary imports
-from scipy.cluster.hierarchy import fcluster
+
 
 # Load the data
 song_data = pd.read_csv('../../../data/10.unsupervised_learning/songs.csv')
@@ -852,8 +855,7 @@ ct = pd.crosstab(seed_df['labels'], seed_df['varieties'])
 print(ct)
 
 # 10. t-SNE visualization of grain dataset
-# Perform the necessary imports
-from sklearn.manifold import TSNE
+
 
 seed_variety_numbers = seed_data.iloc[:, -1].values
 print("variety_numbers: ", seed_variety_numbers)
@@ -875,8 +877,7 @@ plt.scatter(xs, ys, c=seed_variety_numbers)
 plt.show()
 
 # 11. A t-SNE map of the stock market
-# Import TSNE
-from sklearn.manifold import TSNE
+
 
 # Create a TSNE instance: model
 model = TSNE(learning_rate=50)
@@ -899,8 +900,7 @@ for x, y, company in zip(xs, ys, companies):
 plt.show()
 
 # 12. Correlated data in nature
-# Perform the necessary imports
-from scipy.stats import pearsonr
+
 
 # Use grains array provided
 
@@ -953,3 +953,138 @@ correlation, pvalue = pearsonr(width, length)
 
 # Display the correlation
 print(correlation)
+
+# 13. Decorrelating the grain measurements with PCA
+
+
+# Create a PCA instance: model
+model = PCA()
+
+# Apply the fit_transform method of model to grains: pca_features
+pca_features = model.fit_transform(grains)
+
+# Assign 0th column of pca_features: xs
+xs = pca_features[:, 0]
+
+# Assign 1st column of pca_features: ys
+ys = pca_features[:, 1]
+
+# Scatter plot xs vs ys
+plt.scatter(xs, ys)
+plt.axis('equal')
+plt.show()
+
+# Calculate the Pearson correlation of xs and ys
+correlation, pvalue = pearsonr(xs, ys)
+
+# Display the correlation
+print(correlation)
+
+# 14. Principal components
+# Make a scatter plot of the untransformed points
+plt.scatter(np.array(grains)[:, 0], np.array(grains)[:, 1])
+
+# Create a PCA instance: model
+model = PCA()
+
+# Fit model to points
+model.fit(grains)
+
+# Get the mean of the grain samples: mean
+mean = model.mean_
+
+# Get the first principal component: first_pc
+first_pc = model.components_[0, :]
+
+# Plot first_pc as an arrow, starting at mean
+plt.arrow(mean[0], mean[1], first_pc[0], first_pc[1], color='red', width=0.01)
+
+# Keep axes on same scale
+plt.axis('equal')
+plt.show()
+
+# 15. Variance of the PCA features
+
+# Create scaler: scaler
+scaler = StandardScaler()
+
+# Create a PCA instance: pca
+pca = PCA()
+
+# Create pipeline: pipeline
+pipeline = make_pipeline(scaler, pca)
+
+# Fit the pipeline to 'samples'
+pipeline.fit(fish_samples)
+
+# Plot the explained variances
+features = range(pca.n_components_)
+plt.bar(features, pca.explained_variance_)
+plt.xlabel('PCA feature')
+plt.ylabel('variance')
+plt.xticks(features)
+plt.show()
+
+# 16. Intrinsic dimension of the fish data
+
+scaled_samples = scaler.fit_transform(fish_samples)
+
+# Create a PCA model with 2 components: pca
+pca = PCA(n_components=2)
+
+# Fit the PCA instance to the scaled samples
+pca.fit(scaled_samples)
+
+# Transform the scaled samples: pca_features
+pca_features = pca.transform(scaled_samples)
+
+# Print the shape of pca_features
+print(pca_features.shape)
+
+# 17. A tf-idf word-frequency array
+documents = ['cats say meow', 'dogs say woof', 'dogs chase cats']
+
+# Create a TfidfVectorizer: tfidf
+tfidf = TfidfVectorizer()
+
+# Apply fit_transform to document: csr_mat
+csr_mat = tfidf.fit_transform(documents)
+
+# Print result of toarray() method
+print(csr_mat.toarray())
+
+# Get the words: words
+words = tfidf.get_feature_names_out()
+
+# Print words
+print(words)
+
+# 18. Clustering Wikipedia part I
+
+# Load the data
+wiki_data = pd.read_csv('../../../data/10.unsupervised_learning/wikipedia-vectors.csv', index_col=0)
+articles = csr_matrix(wiki_data.transpose())
+titles = wiki_data.columns
+
+# Create a TruncatedSVD instance: svd
+svd = TruncatedSVD(n_components=50)
+
+# Create a KMeans instance: kmeans
+kmeans = KMeans(n_clusters=6)
+
+# Create a pipeline: pipeline
+pipeline = make_pipeline(svd, kmeans)
+
+# 19. Clustering Wikipedia part II
+
+# Fit the pipeline to articles
+pipeline.fit(articles)
+
+# Calculate the cluster labels: labels
+labels = pipeline.predict(articles)
+
+# Create a DataFrame aligning labels and titles: df
+wiki_df = pd.DataFrame({'label': labels, 'article': titles})
+
+# Display df sorted by cluster label
+print(wiki_df.sort_values('label'))
