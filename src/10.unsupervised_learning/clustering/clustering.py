@@ -20,6 +20,9 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import normalize
+from sklearn.decomposition import NMF
+from sklearn.preprocessing import MaxAbsScaler
+
 
 # create an array of points
 points = np.array([[0.06544649, -0.76866376],
@@ -1088,3 +1091,133 @@ wiki_df = pd.DataFrame({'label': labels, 'article': titles})
 
 # Display df sorted by cluster label
 print(wiki_df.sort_values('label'))
+
+# 20. Non-negative matrix factorization (NMF)
+
+
+# Create an NMF instance: model
+model = NMF(n_components=6)
+
+# Fit the model to articles
+model.fit(articles)
+
+# Transform the articles: nmf_features
+nmf_features = model.transform(articles)
+
+# Print the NMF features
+print(nmf_features.round(2))
+
+# 21. NMF features of the Wikipedia articles
+# Create a pandas DataFrame: df
+wiki_df = pd.DataFrame(nmf_features, index=titles)
+
+# Print the row for 'Anne Hathaway'
+print(wiki_df.loc['Anne Hathaway'])
+
+# Print the row for 'Denzel Washington'
+print(wiki_df.loc['Denzel Washington'])
+
+# 22. NMF learns interpretable parts
+
+# Import the wikipedia-vocabulary
+words = pd.read_csv('../../../data/10.unsupervised_learning/wikipedia-vocabulary-utf8.txt', header=None)
+words = words.values
+
+# Create a DataFrame: components_df
+components_df = pd.DataFrame(model.components_, columns=words)
+
+# Print the shape of the DataFrame
+print(components_df.shape)
+
+# Select row 3: component
+component = components_df.iloc[3]
+
+# Print result of nlargest
+print(component.nlargest())
+
+# 23. Explore the LED digits dataset
+# Load the LED digits data
+led_data = pd.read_csv('../../../data/10.unsupervised_learning/lcd-digits.csv', header=None)
+samples = led_data.values
+
+# select the 0th row: digit
+digit = samples[0, :]
+
+# Print digit
+print(digit)
+
+# Reshape digit to a 13x8 array: bitmap
+bitmap = digit.reshape(13, 8)
+
+# Print bitmap
+print(bitmap)
+
+# Use plt.imshow to display bitmap
+plt.imshow(bitmap, cmap='gray', interpolation='nearest')
+plt.colorbar()
+plt.show()
+
+
+# 24. NMF learns the parts of images
+
+# Function to show the images
+def show_as_image(sample):
+    bitmap = sample.reshape((13, 8))
+    plt.figure()
+    plt.imshow(bitmap, cmap='gray', interpolation='nearest')
+    plt.colorbar()
+    plt.show()
+
+
+# Create an NMF model: model
+image_model = NMF(n_components=7)
+
+# Apply fit_transform to samples: features
+features = image_model.fit_transform(samples)
+
+# Call show_as_image on each component
+for component in image_model.components_:
+    show_as_image(component)
+
+# Select the 0th row of features: digit_features
+digit_features = features[0, :]
+
+# Print digit_features
+print(digit_features)
+
+# 25. PCA doesn't learn parts
+# Create a PCA instance: model
+model = PCA(n_components=7)
+
+# Apply fit_transform to samples: features
+features = model.fit_transform(samples)
+
+# Call show_as_image on each component
+for component in model.components_:
+    show_as_image(component)
+
+# 26. Which articles are similar to 'Cristiano Ronaldo'?
+# Load the data
+wiki_data = pd.read_csv('../../../data/10.unsupervised_learning/wikipedia-vectors.csv', index_col=0)
+articles = csr_matrix(wiki_data.transpose())
+titles = wiki_data.columns
+
+# Normalize the NMF features: norm_features
+norm_features = normalize(nmf_features)
+
+# Create a DataFrame: df
+wiki_titles_df = pd.DataFrame(norm_features, index=titles)
+
+# Select the row corresponding to 'Cristiano Ronaldo': article
+article = wiki_titles_df.loc['Cristiano Ronaldo']
+
+# Compute the dot products: similarities
+similarities = wiki_titles_df.dot(article)
+
+# Display those with the largest cosine similarity
+print(similarities.nlargest())
+
+# 27. Recommend musical artists part I & II
+
+# This part of the exercise could not be recreated since the sparse array used in Datacamp is not recreatable hence
+# decided to complete this within the labs itself.
