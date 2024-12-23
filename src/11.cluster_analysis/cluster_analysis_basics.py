@@ -18,14 +18,14 @@ from scipy.cluster.hierarchy import fcluster, linkage
 from scipy.cluster.vq import kmeans, vq
 # Import the whiten function
 from scipy.cluster.vq import whiten
-# import nltk (for remove_noise function)
-import nltk
-# import re (for remove_noise function)
-import re
-# Import the word_tokenize function for the remove_noise function
-from nltk.tokenize import word_tokenize
-# Import TfidfVectorizer class from sklearn (for documents)
-from sklearn.feature_extraction.text import TfidfVectorizer
+## import nltk (for remove_noise function)
+# import nltk
+## import re (for remove_noise function)
+# import re
+## Import the word_tokenize function for the remove_noise function
+# from nltk.tokenize import word_tokenize
+## Import TfidfVectorizer class from sklearn (for documents)
+# from sklearn.feature_extraction.text import TfidfVectorizer
 
 # 1. Pokemon Sightings
 print("-----------------Pokemon Sightings-----------------")
@@ -515,13 +515,13 @@ fifa['scaled_dri'] = whiten(fifa['dri'])
 fifa['scaled_sho'] = whiten(fifa['sho'])
 
 # Fit the data into a KMeans algorithm
-cluster_centers, distortion = kmeans(fifa[['scaled_dri','scaled_sho', 'scaled_pac']], 3)
+cluster_centers, distortion = kmeans(fifa[['scaled_dri', 'scaled_sho', 'scaled_pac']], 3)
 
 # Assign cluster labels
-fifa['cluster_labels'], _ = vq(fifa[['scaled_dri','scaled_sho', 'scaled_pac']], cluster_centers)
+fifa['cluster_labels'], _ = vq(fifa[['scaled_dri', 'scaled_sho', 'scaled_pac']], cluster_centers)
 
 # Display cluster centers of each cluster
-print(fifa[['scaled_dri','scaled_sho', 'scaled_pac', 'cluster_labels']].groupby('cluster_labels').mean())
+print(fifa[['scaled_dri', 'scaled_sho', 'scaled_pac', 'cluster_labels']].groupby('cluster_labels').mean())
 
 # Print the size of the clusters
 print(fifa.groupby('cluster_labels')['ID'].count())
