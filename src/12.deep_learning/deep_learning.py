@@ -1,14 +1,15 @@
 # coding the forward propagation algorithm
 import numpy as np
+import pandas as pd
 
-#1. Forward propagation algorithm
-#import the input data and weights
+# 1. Forward propagation algorithm
+# import the input data and weights
 print("Exercise 1: Forward propagation algorithm")
 
 input_data = np.array([3, 5])
 print("Input data:", input_data)
 
-weights = {'node_0': np.array([2, 4]), 'node_1': np.array([ 4, -5]), 'output': np.array([2, 7])}
+weights = {'node_0': np.array([2, 4]), 'node_1': np.array([4, -5]), 'output': np.array([2, 7])}
 print("weights:", weights)
 
 # Calculate node 0 value: node_0_value
@@ -29,11 +30,12 @@ output = (hidden_layer_outputs * weights['output']).sum()
 # Print output
 print("Forward propagation algorithm (hidden layer outputs * weights of outputs):", output)
 
-#--------------------------------------------------------------
+# --------------------------------------------------------------
 
-#2. Activation function (ReLU)
+# 2. Activation function (ReLU)
 
 print("\nExercise 2: Activation function (ReLU)")
+
 
 def relu(input):
     '''Define the relu function'''
@@ -41,7 +43,8 @@ def relu(input):
     output = max(0, input)
 
     # Return the value just calculated
-    return(output)
+    return (output)
+
 
 # Calculate node 0 value: node_0_output
 node_0_input = (input_data * weights['node_0']).sum()
@@ -61,13 +64,14 @@ print("Hidden layer outputs (ReLU):", hidden_layer_outputs)
 output = (hidden_layer_outputs * weights['output']).sum()
 print("Forward propagation algorithm (hidden layer outputs * weights of outputs):", output)
 
-#--------------------------------------------------------------
-#3. Applying the network to many observations/rows of data
+# --------------------------------------------------------------
+# 3. Applying the network to many observations/rows of data
 
 print("\nExercise 3: Applying the network to many observations/rows of data")
 
-input_data = [np.array([3, 5]), np.array([ 1, -1]), np.array([0, 0]), np.array([8, 4])]
+input_data = [np.array([3, 5]), np.array([1, -1]), np.array([0, 0]), np.array([8, 4])]
 print("Input data:", input_data)
+
 
 # Define the predict_with_network() function
 def predict_with_network(input_data_row, weights):
@@ -87,7 +91,8 @@ def predict_with_network(input_data_row, weights):
     model_output = relu(input_to_final_layer)
 
     # Return model output
-    return(model_output)
+    return (model_output)
+
 
 # Create empty list to store prediction results
 results = []
@@ -98,8 +103,8 @@ for input_data_row in input_data:
 # Print results
 print("Predictions for each row of input data:", results)
 
-#--------------------------------------------------------------
-#4. Multi-layer neural networks
+# --------------------------------------------------------------
+# 4. Multi-layer neural networks
 
 print("\nExercise 4: Multi-layer neural networks")
 
@@ -108,8 +113,10 @@ input_data = np.array([3, 5])
 print("Input data:", input_data)
 
 # Define the weights
-weights = {'node_0_0': np.array([2, 4]), 'node_0_1': np.array([ 4, -5]), 'node_1_0': np.array([-1, 2]), 'node_1_1': np.array([1, 2]), 'output': np.array([2, 7])}
+weights = {'node_0_0': np.array([2, 4]), 'node_0_1': np.array([4, -5]), 'node_1_0': np.array([-1, 2]),
+           'node_1_1': np.array([1, 2]), 'output': np.array([2, 7])}
 print("Weights:", weights)
+
 
 # Define the predict_with_network() function
 def predict_with_network(input_data):
@@ -140,14 +147,15 @@ def predict_with_network(input_data):
     model_output = relu(input_to_final_layer)
 
     # Return model output
-    return(model_output)
+    return (model_output)
+
 
 # Make predictions using the network
 output = predict_with_network(input_data)
 print("Predictions for input data:", output)
 
-#--------------------------------------------------------------
-#5. Coding how weight changes affect accuracy
+# --------------------------------------------------------------
+# 5. Coding how weight changes affect accuracy
 
 print("\nExercise 5: Coding how weight changes affect accuracy")
 
@@ -155,10 +163,11 @@ print("\nExercise 5: Coding how weight changes affect accuracy")
 input_data = np.array([0, 3])
 
 # Sample weights
-weights_0 = {'node_0': np.array([2, 1]), 'node_1': np.array([ 1, 2]), 'output': np.array([1, 1])}
+weights_0 = {'node_0': np.array([2, 1]), 'node_1': np.array([1, 2]), 'output': np.array([1, 1])}
 
 # The actual target value, used to calculate the error
 target_actual = 3
+
 
 # Define the predict_with_network() function
 def predict_with_network(input_data, weights):
@@ -178,7 +187,8 @@ def predict_with_network(input_data, weights):
     model_output = relu(input_to_final_layer)
 
     # Return model output
-    return(model_output)
+    return (model_output)
+
 
 # Make prediction using original weights
 model_output_0 = predict_with_network(input_data, weights_0)
@@ -189,7 +199,7 @@ error_0 = model_output_0 - target_actual
 print("Error with original weights:", error_0)
 
 # Create weights that cause the network to make perfect prediction (3): weights_1
-weights_1 = {'node_0': np.array([2, 1]), 'node_1': np.array([ 1, 2]), 'output': np.array([1, 0])}
+weights_1 = {'node_0': np.array([2, 1]), 'node_1': np.array([1, 2]), 'output': np.array([1, 0])}
 
 # Make prediction using new weights: model_output_1
 model_output_1 = predict_with_network(input_data, weights_1)
@@ -204,8 +214,8 @@ print("Original error:", error_0)
 # Print the new error
 print("New error:", error_1)
 
-#--------------------------------------------------------------
-#6. Scaling up to multiple data points
+# --------------------------------------------------------------
+# 6. Scaling up to multiple data points
 
 print("\nExercise 6: Scaling up to multiple data points")
 
@@ -221,9 +231,8 @@ target_actuals = [1, 3, 5, 7]
 print("Actual target values:", target_actuals)
 
 # Sample weights
-weights_0 = {'node_0': np.array([2, 1]), 'node_1': np.array([ 1, 2]), 'output': np.array([1, 1])}
-weights_1 = {'node_0': np.array([2, 1]), 'node_1': np.array([1. , 1.5]), 'output': np.array([1. , 1.5])}
-
+weights_0 = {'node_0': np.array([2, 1]), 'node_1': np.array([1, 2]), 'output': np.array([1, 1])}
+weights_1 = {'node_0': np.array([2, 1]), 'node_1': np.array([1., 1.5]), 'output': np.array([1., 1.5])}
 
 # Create model_output_0
 model_output_0 = []
@@ -246,11 +255,11 @@ mse_1 = mean_squared_error(target_actuals, model_output_1)
 print("Mean squared error with new weights:", mse_1)
 
 # Print mse_0 and mse_1
-print("Mean squared error with weights_0: %f" %mse_0)
-print("Mean squared error with weights_1: %f" %mse_1)
+print("Mean squared error with weights_0: %f" % mse_0)
+print("Mean squared error with weights_1: %f" % mse_1)
 
-#--------------------------------------------------------------
-#7. Calculating slopes
+# --------------------------------------------------------------
+# 7. Calculating slopes
 
 print("\nExercise 7: Calculating slopes")
 
@@ -280,8 +289,8 @@ slope = 2 * input_data * error
 # Print the slope
 print("Slope:", slope)
 
-#--------------------------------------------------------------
-#8. Improving model weights
+# --------------------------------------------------------------
+# 8. Improving model weights
 
 print("\nExercise 8: Improving model weights")
 
@@ -303,8 +312,8 @@ print("Original error:", error)
 # Print the updated error
 print("Updated error:", error_updated)
 
-#--------------------------------------------------------------
-#9. Making multiple updates to weights
+# --------------------------------------------------------------
+# 9. Making multiple updates to weights
 
 print("\nExercise 9: Making multiple updates to weights")
 
@@ -326,6 +335,7 @@ print("Weights:", weights)
 n_updates = 20
 mse_hist = []
 
+
 # Define the get_slope() function
 def get_slope(input_data, target, weights):
     # Calculate the predictions: preds
@@ -337,7 +347,8 @@ def get_slope(input_data, target, weights):
     # Calculate the slope: slope
     slope = 2 * input_data * error
 
-    return(slope)
+    return (slope)
+
 
 # define the get_mse() function
 def get_mse(input_data, target, weights):
@@ -347,7 +358,8 @@ def get_mse(input_data, target, weights):
     # Calculate the mean squared error: mse
     mse = mean_squared_error([target], [preds])
 
-    return(mse)
+    return (mse)
+
 
 # Iterate over the number of updates
 for i in range(n_updates):
@@ -367,4 +379,52 @@ plt.xlabel('Iterations')
 plt.ylabel('Mean Squared Error')
 plt.show()
 
-#--------------------------------------------------------------
+# --------------------------------------------------------------
+
+# 10. Specifying the model
+
+print("\nExercise 10: Specifying the model")
+
+# Import the hourly wage data
+
+
+df = pd.read_csv('../../data/12.deep_learning/hourly_wages.csv', encoding='latin1')
+
+predictors = df.drop('wage_per_hour', axis=1).values
+target = df['wage_per_hour'].values
+
+# Import the Sequential model and Dense layer
+
+from keras import models, layers
+
+# Save the number of columns in predictors: n_cols
+n_cols = predictors.shape[1]
+
+# Set up the model: model
+model = models.Sequential([
+    layers.Input(shape=(n_cols,)),
+    layers.Dense(50, activation='relu')
+])
+
+# # Add the first layer
+# model.add(layers.Dense(50, activation='relu', input_shape=(n_cols,)))
+#
+# # Add the second layer
+# model.add(layers.Dense(32, activation='relu'))
+
+# Add the output layer
+model.add(layers.Dense(1))
+
+# --------------------------------------------------------------
+# 11. Compiling the model
+
+print("\nExercise 11: Compiling the model")
+
+# Compile the model
+model.compile(optimizer='adam', loss='mean_squared_error')
+
+# Verify that model is compiled
+print("Model summary:")
+print(model.summary())
+
+# --------------------------------------------------------------
