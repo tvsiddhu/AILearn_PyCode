@@ -395,7 +395,7 @@ target = df['wage_per_hour'].values
 
 # Import the Sequential model and Dense layer
 
-from keras import models, layers
+from keras import models, layers, utils
 
 # Save the number of columns in predictors: n_cols
 n_cols = predictors.shape[1]
@@ -420,11 +420,95 @@ model.add(layers.Dense(1))
 
 print("\nExercise 11: Compiling the model")
 
+# Specify the model
+n_cols = predictors.shape[1]
+model = models.Sequential()
+model.add(layers.Dense(50, activation='relu', input_shape=(n_cols,)))
+model.add(layers.Dense(32, activation='relu'))
+model.add(layers.Dense(1))
+
 # Compile the model
 model.compile(optimizer='adam', loss='mean_squared_error')
 
 # Verify that model is compiled
-print("Model summary:")
+print("\nModel summary:" )
 print(model.summary())
+print("\nLoss function:" + model.loss)
 
 # --------------------------------------------------------------
+# 12. Fitting the model
+
+print("\nExercise 12: Fitting the model")
+
+# Fit the model
+model.fit(predictors, target)
+
+# --------------------------------------------------------------
+# 13. Last steps in classification models
+
+print("\nExercise 13: Last steps in classification models")
+
+# Import the data
+# df = pd.read_csv('../../data/12.deep_learning/titanic_all_numeric.csv', encoding='latin1')
+df = pd.read_csv('../../data/12.deep_learning/titanic_all_numeric.csv', encoding='latin1', dtype=str)
+
+# predictors = df.drop('survived', axis=1).values
+
+predictors = df.drop('survived', axis=1).apply(pd.to_numeric, errors='coerce').fillna(0).values
+
+# Convert the target to categorical: target
+target = utils.to_categorical(df['survived'])
+
+# Specify the model
+n_cols = predictors.shape[1]
+
+# Set up the model
+model = models.Sequential()
+
+# Add the first layer
+model.add(layers.Dense(32, activation='relu', input_shape=(n_cols,)))
+
+# Add the output layer
+model.add(layers.Dense(2, activation='softmax'))
+
+# Compile the model
+model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
+
+
+# Fit the model
+model.fit(predictors, target)
+
+# --------------------------------------------------------------
+# 14. Making predictions
+
+print("\nExercise 14: Making predictions")
+
+# Not including this code since the underlying data is not available as part of the course
+
+# # Import the new data
+# pred_data = pd.read_csv('../../data/12.deep_learning/pred_data.csv', encoding='latin1', dtype=str)
+# pred_data = pred_data.apply(pd.to_numeric, errors='coerce').fillna(0).to_numpy()
+#
+# model = models.Sequential([layers.Input(shape=(32,11)), layers.Dense(50, activation='relu')])
+#
+# # Add the output layer
+# model.add(layers.Dense(2, activation='softmax'))
+#
+# # Compile the model
+# model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
+#
+# # Fit the model
+# model.fit(predictors, target)
+#
+# # Calculate predictions: predictions
+# predictions = model.predict(pred_data)
+#
+# # Calculate predicted probability of survival: predicted_prob_true
+# predicted_prob_true = predictions[:, 1]
+#
+# # print predicted_prob_true
+# print("Predicted probability of survival:", predicted_prob_true)
+
+# --------------------------------------------------------------
+# 15. Changing optimization parameters
+
