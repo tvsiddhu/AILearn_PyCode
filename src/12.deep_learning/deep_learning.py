@@ -1,6 +1,13 @@
 # coding the forward propagation algorithm
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+# Import EarlyStopping
+from keras import callbacks
+from keras import models, layers, utils
+# Import the SGD optimizer
+from keras import optimizers
+from sklearn.metrics import mean_squared_error
 
 # 1. Forward propagation algorithm
 # import the input data and weights
@@ -38,12 +45,12 @@ print("\nExercise 2: Activation function (ReLU)")
 
 
 def relu(input):
-    '''Define the relu function'''
+    """Define the relu function"""
     # Calculate the value for the output of the relu function: output
     output = max(0, input)
 
     # Return the value just calculated
-    return (output)
+    return output
 
 
 # Calculate node 0 value: node_0_output
@@ -147,7 +154,7 @@ def predict_with_network(input_data):
     model_output = relu(input_to_final_layer)
 
     # Return model output
-    return (model_output)
+    return model_output
 
 
 # Make predictions using the network
@@ -187,7 +194,7 @@ def predict_with_network(input_data, weights):
     model_output = relu(input_to_final_layer)
 
     # Return model output
-    return (model_output)
+    return model_output
 
 
 # Make prediction using original weights
@@ -218,9 +225,6 @@ print("New error:", error_1)
 # 6. Scaling up to multiple data points
 
 print("\nExercise 6: Scaling up to multiple data points")
-
-# import mean_squared_error from sklearn.metrics
-from sklearn.metrics import mean_squared_error
 
 # Define the input data
 input_data = [np.array([0, 3]), np.array([1, 2]), np.array([-1, -2]), np.array([4, 0])]
@@ -317,9 +321,6 @@ print("Updated error:", error_updated)
 
 print("\nExercise 9: Making multiple updates to weights")
 
-# Import matplotlib
-import matplotlib.pyplot as plt
-
 # Define the input data
 input_data = np.array([1, 2, 3])
 print("Input data:", input_data)
@@ -395,8 +396,6 @@ target = df['wage_per_hour'].values
 
 # Import the Sequential model and Dense layer
 
-from keras import models, layers, utils
-
 # Save the number of columns in predictors: n_cols
 n_cols = predictors.shape[1]
 
@@ -431,7 +430,7 @@ model.add(layers.Dense(1))
 model.compile(optimizer='adam', loss='mean_squared_error')
 
 # Verify that model is compiled
-print("\nModel summary:" )
+print("\nModel summary:")
 print(model.summary())
 print("\nLoss function:" + model.loss)
 
@@ -474,41 +473,158 @@ model.add(layers.Dense(2, activation='softmax'))
 # Compile the model
 model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
 
-
 # Fit the model
 model.fit(predictors, target)
+
+print("\nDebugging:")
+print("\ndf.shape:", df.shape)
+print("\nn_cols:", n_cols)
+print("\npredictors.shape:", predictors.shape)
+print("\ntarget.shape:", target.shape)
 
 # --------------------------------------------------------------
 # 14. Making predictions
 
 print("\nExercise 14: Making predictions")
+predictions = model.predict(predictors)
 
-# Not including this code since the underlying data is not available as part of the course
+# Calculate predicted probability of survival: predicted_prob_true
+predicted_prob_true = predictions[:, 1]
 
-# # Import the new data
-# pred_data = pd.read_csv('../../data/12.deep_learning/pred_data.csv', encoding='latin1', dtype=str)
-# pred_data = pred_data.apply(pd.to_numeric, errors='coerce').fillna(0).to_numpy()
-#
-# model = models.Sequential([layers.Input(shape=(32,11)), layers.Dense(50, activation='relu')])
-#
-# # Add the output layer
-# model.add(layers.Dense(2, activation='softmax'))
-#
-# # Compile the model
-# model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
-#
-# # Fit the model
-# model.fit(predictors, target)
-#
-# # Calculate predictions: predictions
-# predictions = model.predict(pred_data)
-#
-# # Calculate predicted probability of survival: predicted_prob_true
-# predicted_prob_true = predictions[:, 1]
-#
-# # print predicted_prob_true
-# print("Predicted probability of survival:", predicted_prob_true)
+# print predicted_prob_true
+print(predicted_prob_true)
 
 # --------------------------------------------------------------
 # 15. Changing optimization parameters
+
+print("\nExercise 15: Changing optimization parameters")
+
+# Create list of learning rates: lr_to_test
+lr_to_test = [0.000001, 0.01, 1.0]
+
+
+def get_new_model(input_shape):
+    model = models.Sequential()
+    model.add(layers.Dense(100, activation='relu', input_shape=(n_cols,)))
+    model.add(layers.Dense(100, activation='relu'))
+    model.add(layers.Dense(2, activation='softmax'))
+    return model
+
+
+# Loop over learning rates
+for lr in lr_to_test:
+    print("\n\nTesting model with learning rate: %f" % lr)
+
+    # Build new model to test, unaffected by previous models
+    model = get_new_model(n_cols)
+    model.add(layers.Dense(32, activation='relu', input_shape=(n_cols,)))
+    model.add(layers.Dense(2, activation='softmax'))
+
+    # Create SGD optimizer with specified learning rate: my_optimizer
+    my_optimizer = optimizers.SGD(learning_rate=lr)
+
+    # Compile the model
+    model.compile(optimizer=my_optimizer, loss='categorical_crossentropy')
+
+    # Fit the model
+    model.fit(predictors, target)
+
+# --------------------------------------------------------------
+# 16. Evaluating model accuracy on validation dataset
+
+print("\nExercise 16: Evaluating model accuracy on validation dataset")
+
+# Save the number of columns in predictors: n_cols
+n_cols = predictors.shape[1]
+input_shape = (n_cols,)
+print("Input shape:", input_shape)
+
+# Specify the model
+model = models.Sequential()
+model.add(layers.Dense(100, activation='relu', input_shape=input_shape))
+model.add(layers.Dense(100, activation='relu'))
+model.add(layers.Dense(2, activation='softmax'))
+
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Fit the model
+hist = model.fit(predictors, target, validation_split=0.3)
+
+# --------------------------------------------------------------
+# 17. Early stopping: Optimizing the optimization
+
+print("\nExercise 17: Early stopping: Optimizing the optimization")
+
+# define the early stopping monitor
+early_stopping_monitor = callbacks.EarlyStopping(patience=2)
+
+# Fit the model
+model.fit(predictors, target, validation_split=0.3, epochs=30, callbacks=[early_stopping_monitor])
+
+# --------------------------------------------------------------
+# 18. Experimenting with wider networks
+
+print("\nExercise 18: Experimenting with wider networks")
+
+# Create the new model: model_2
+model_2 = models.Sequential()
+model_2.add(layers.Dense(100, activation='relu', input_shape=input_shape))
+model_2.add(layers.Dense(100, activation='relu'))
+model_2.add(layers.Dense(2, activation='softmax'))
+
+# Compile model_2
+model_2.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Fit model_1
+model_1_training = model.fit(predictors, target, epochs=15, validation_split=0.2, callbacks=[early_stopping_monitor], verbose=False)
+
+# Fit model_2
+model_2_training = model_2.fit(predictors, target, epochs=15, validation_split=0.2, callbacks=[early_stopping_monitor], verbose=False)
+
+# Create the plot
+plt.plot(model_1_training.history['val_loss'], 'r', model_2_training.history['val_loss'], 'b')
+plt.xlabel('Epochs')
+plt.ylabel('Validation loss')
+plt.show()
+
+# --------------------------------------------------------------
+# 19. Adding layers to a network
+
+print("\nExercise 19: Adding layers to a network")
+
+# The input shape to use in the first hidden layer
+input_shape = (n_cols,)
+print("Input shape:", input_shape)
+
+# Create the new model: model_3
+model_3 = models.Sequential()
+
+# Add the first, second, and third hidden layers
+model_3.add(layers.Dense(10, activation='relu', input_shape=input_shape))
+model_3.add(layers.Dense(10, activation='relu'))
+model_3.add(layers.Dense(10, activation='relu'))
+
+# Add the output layer
+model_3.add(layers.Dense(2, activation='softmax'))
+
+# Compile model_3
+model_3.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Fit model_1
+model_1_training = model.fit(predictors, target, epochs=15, validation_split=0.4, callbacks=[early_stopping_monitor], verbose=False)
+
+# Fit model_2
+model_2_training = model_2.fit(predictors, target, epochs=15, validation_split=0.4, callbacks=[early_stopping_monitor], verbose=False)
+
+# Fit model_3
+model_3_training = model_3.fit(predictors, target, epochs=15, validation_split=0.4, callbacks=[early_stopping_monitor], verbose=False)
+
+# Create the plot
+plt.plot(model_1_training.history['val_loss'], 'r', model_2_training.history['val_loss'], 'b', model_3_training.history['val_loss'], 'g')
+plt.xlabel('Epochs')
+plt.ylabel('Validation loss')
+plt.show()
+
+# --------------------------------------------------------------
 
