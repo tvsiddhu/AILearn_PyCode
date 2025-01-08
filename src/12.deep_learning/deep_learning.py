@@ -577,10 +577,12 @@ model_2.add(layers.Dense(2, activation='softmax'))
 model_2.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Fit model_1
-model_1_training = model.fit(predictors, target, epochs=15, validation_split=0.2, callbacks=[early_stopping_monitor], verbose=False)
+model_1_training = model.fit(predictors, target, epochs=15, validation_split=0.2, callbacks=[early_stopping_monitor],
+                             verbose=False)
 
 # Fit model_2
-model_2_training = model_2.fit(predictors, target, epochs=15, validation_split=0.2, callbacks=[early_stopping_monitor], verbose=False)
+model_2_training = model_2.fit(predictors, target, epochs=15, validation_split=0.2, callbacks=[early_stopping_monitor],
+                               verbose=False)
 
 # Create the plot
 plt.plot(model_1_training.history['val_loss'], 'r', model_2_training.history['val_loss'], 'b')
@@ -612,19 +614,89 @@ model_3.add(layers.Dense(2, activation='softmax'))
 model_3.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Fit model_1
-model_1_training = model.fit(predictors, target, epochs=15, validation_split=0.4, callbacks=[early_stopping_monitor], verbose=False)
+model_1_training = model.fit(predictors, target, epochs=15, validation_split=0.4, callbacks=[early_stopping_monitor],
+                             verbose=False)
 
 # Fit model_2
-model_2_training = model_2.fit(predictors, target, epochs=15, validation_split=0.4, callbacks=[early_stopping_monitor], verbose=False)
+model_2_training = model_2.fit(predictors, target, epochs=15, validation_split=0.4, callbacks=[early_stopping_monitor],
+                               verbose=False)
 
 # Fit model_3
-model_3_training = model_3.fit(predictors, target, epochs=15, validation_split=0.4, callbacks=[early_stopping_monitor], verbose=False)
+model_3_training = model_3.fit(predictors, target, epochs=15, validation_split=0.4, callbacks=[early_stopping_monitor],
+                               verbose=False)
 
 # Create the plot
-plt.plot(model_1_training.history['val_loss'], 'r', model_2_training.history['val_loss'], 'b', model_3_training.history['val_loss'], 'g')
+plt.plot(model_1_training.history['val_loss'], 'r', model_2_training.history['val_loss'], 'b',
+         model_3_training.history['val_loss'], 'g')
 plt.xlabel('Epochs')
 plt.ylabel('Validation loss')
 plt.show()
 
 # --------------------------------------------------------------
+# 20. Building your own digit recognition model
 
+print("\nExercise 20: Building your own digit recognition model")
+
+# import tensorflow as tf
+import tensorflow as tf
+
+# Load the MNIST dataset
+(X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+# Print shapes of raw data
+print("Raw X_train shape:", X_train.shape)  # (60000, 28, 28)
+print("Raw y_train shape:", y_train.shape)  # (60000,)
+
+# Normalize pixel values to range [0, 1]
+X_train = X_train.astype('float32') / 255.0
+X_test = X_test.astype('float32') / 255.0
+
+# Reshape data for the model
+# For CNNs, add channel dimension: (28, 28, 1)
+X_train = X_train.reshape((X_train.shape[0], 28, 28, 1))
+X_test = X_test.reshape((X_test.shape[0], 28, 28, 1))
+
+# Print shapes after normalization and reshaping
+print("Processed X_train shape:", X_train.shape)  # (60000, 28, 28, 1)
+
+# Convert labels to one-hot encoding
+y_train = utils.to_categorical(y_train, num_classes=10)
+y_test = utils.to_categorical(y_test, num_classes=10)
+
+# Print shapes after one-hot encoding
+print("Processed y_train shape:", y_train.shape)  # (60000, 10)
+
+# Create the model
+model = models.Sequential()
+
+# Add the first convolutional layer
+model.add(layers.Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(28, 28, 1)))
+
+# Add the second convolutional layer
+model.add(layers.Conv2D(64, kernel_size=(3, 3), activation='relu'))
+
+# Add a pooling layer
+model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+
+# Add dropout layer
+model.add(layers.Dropout(0.25))
+
+# Flatten the output of the convolutional layer
+model.add(layers.Flatten())
+
+# Add a dense layer
+model.add(layers.Dense(128, activation='relu'))
+
+# Add another dropout layer
+model.add(layers.Dropout(0.5))
+
+# Add the output layer
+model.add(layers.Dense(10, activation='softmax'))
+
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Fit the model
+model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=10, batch_size=200)
+
+# --------------------------------------------------------------
