@@ -5,8 +5,8 @@
 print("\n1. Defining data as constants")
 print('-----------------------------------------------------------------')
 
-from tensorflow import constant
 import pandas as pd
+from tensorflow import constant
 
 # Import the data
 df = pd.read_csv('../../data/12.deep_learning/credit_numpy_array.csv', header=0, index_col=0)
@@ -138,6 +138,7 @@ print('-----------------------------------------------------------------')
 from tensorflow import GradientTape, multiply, Variable
 import numpy as np
 
+
 def compute_gradient(x0):
     # Define x as a variable equal to x0
     x = Variable(x0)
@@ -158,7 +159,7 @@ print(compute_gradient(0.0))
 print("\n8. Working with image data")
 print('-----------------------------------------------------------------')
 
-letter = np.array([[1.0, 0, 1.0], [1., 1., 0], [1., 0, 1.] ])
+letter = np.array([[1.0, 0, 1.0], [1., 1., 0], [1., 0, 1.]])
 model = np.array([[1., 0., -1.]])
 
 model = reshape(model, (3, 1))
@@ -169,4 +170,3 @@ output = matmul(letter, model)
 # Sum over output and print prediction using the numpy method
 prediction = reduce_sum(output)
 print("Prediction: {}".format(prediction.numpy()))
-
