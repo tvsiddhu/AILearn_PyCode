@@ -170,3 +170,6 @@ output = matmul(letter, model)
 # Sum over output and print prediction using the numpy method
 prediction = reduce_sum(output)
 print("Prediction: {}".format(prediction.numpy()))
+
+# 9. Using activation functions
+print("\n9. Using activation functions")
