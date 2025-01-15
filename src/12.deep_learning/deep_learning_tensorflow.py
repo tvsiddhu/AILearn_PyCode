@@ -171,5 +171,32 @@ output = matmul(letter, model)
 prediction = reduce_sum(output)
 print("Prediction: {}".format(prediction.numpy()))
 
-# 9. Using activation functions
-print("\n9. Using activation functions")
+# INPUT DATA
+# 9. Load data using pandas
+print("\n9. Load data using pandas")
+print('-----------------------------------------------------------------')
+
+from tensorflow import cast
+
+# Load the data
+data_path = '../../data/12.deep_learning/kc_house_data.csv'
+
+# Load data using read_csv
+housing = pd.read_csv(data_path)
+
+# Print the price column of housing
+print(housing['price'])
+
+# 10. Setting the data type
+print("\n10. Setting the data type")
+print('-----------------------------------------------------------------')
+
+# Use a numpy array to define price as a 32-bit float
+price = np.array(housing['price'], np.float32)
+
+# Define waterfront as a Boolean using cast
+waterfront = cast(housing['waterfront'], bool)
+
+# Print price and waterfront
+print("Price:", price)
+print("Waterfront:", waterfront)
