@@ -200,3 +200,55 @@ waterfront = cast(housing['waterfront'], bool)
 # Print price and waterfront
 print("Price:", price)
 print("Waterfront:", waterfront)
+
+# 11. Loss functions in TensorFlow
+print("\n11. Loss functions in TensorFlow")
+print('-----------------------------------------------------------------')
+
+import keras
+
+print("price shape:", price.shape)
+
+df = pd.read_csv('../../data/12.deep_learning/predictions.csv', header=0).to_numpy()
+predictions = df[:, 0]
+print("predictions shape:", predictions.shape)
+
+# Compute the mean squared error (mse)
+loss = keras.losses.mean_squared_error(price, predictions)
+
+# Print the mean squared error (mse)
+print("Loss function using mean squared error:", loss.numpy())
+
+# print the mean absolute error (mae)
+loss = keras.losses.mean_absolute_error(price, predictions)
+print("Loss function using mean absolute error:", loss.numpy())
+
+# print the huber loss
+loss = keras.losses.huber(price, predictions)
+print("Loss function using huber loss:", loss.numpy())
+
+# 12. Modifying the loss function
+print("\n12. Modifying the loss function")
+print('-----------------------------------------------------------------')
+
+features = np.array([[1, 2, 3, 4, 5]], np.float32)
+float32 = np.float32
+targets = np.array([2, 4, 6, 8, 10], np.float32)
+
+
+# Initialize a variable named scalar
+scalar = Variable(1.0, float32)
+
+# Define the model
+def model(scalar, features=features):
+    return scalar * features
+
+# Define a loss function
+def loss_function(scalar, features=features, targets=targets):
+    # Compute the predicted values
+    predictions = model(scalar, features)
+    # Return the mean absolute error loss
+    return keras.losses.mean_absolute_error(targets, predictions)
+
+# Evaluate the loss function and print the loss
+print(loss_function(scalar).numpy())
