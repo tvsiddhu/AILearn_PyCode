@@ -294,7 +294,6 @@ print("\n14. Train a linear model")
 print('-----------------------------------------------------------------')
 
 
-# @TODO: Fix the plot_results function to address deprecated matplotlib 3.10 converter function warning
 def plot_results(intercept, slope):
     size_range = np.linspace(6, 14, 100)
     price_pred = [intercept + slope * size for size in size_range]
@@ -331,50 +330,40 @@ for j in range(100):
 
 plot_results(intercept, slope)
 
-# # 15. Multiple linear regression
-# print("\n15. Multiple linear regression")
-# print('-----------------------------------------------------------------')
-#
-# bedrooms = np.array(housing['bedrooms'], np.float32)
-# bathrooms = np.array(housing['bathrooms'], np.float32)
-#
-# bedrooms_log = np.log(bedrooms)
-# bathrooms_log = np.log(bathrooms)
-#
-# # Define the intercept and slope
-# intercept = Variable(0.1, float32)
-# slope_bedrooms = Variable(0.1, float32)
-#
-#
-# def print_results(intercept, slope_bedrooms, slope_bathrooms):
-#     print('The regression line is given by')
-#     print('price =', intercept.numpy(), '+', slope_bedrooms.numpy(), '* bedrooms +', slope_bathrooms.numpy(),
-#           '* bathrooms')
-#
-#
-# # Define the linear regression model
-# def linear_regression(params, feature1=bedrooms_log, feature2=bathrooms):
-#     return params[0] + feature1 * params[1] + feature2 * params[2]
-#
-#
-# # Define the loss function
-# def loss_function(params, feature1=bedrooms_log, feature2=bathrooms, targets=price_log):
-#     # Set the predicted values
-#     predictions = linear_regression(params, feature1, feature2)
-#
-#     # Use the mean absolute error loss
-#     return keras.losses.mean_absolute_error(targets, predictions)
-#
-#
-# # Define the optimize operation
-# opt = keras.optimizers.Adam()
-#
-# # Perform minimization using the Adam optimizer
-# for j in range(10):
-#     with tf.GradientTape() as tape:
-#         loss_value = loss_function(params)
-#     grads = tape.gradient(loss_value, [params])
-#     opt.apply_gradients(zip(grads, [params]))
-#
-#
-# print_results(params[0], params[1], params[2])
+# 15. Multiple linear regression
+print("\n15. Multiple linear regression")
+print('-----------------------------------------------------------------')
+
+bedrooms = np.array(housing['bedrooms'], np.float32)
+
+print_results = lambda params: print('intercept: {:0.2f}, slope_1: {:0.2f}, slope_2: {:0.2f}'.format(*params.numpy()))
+
+
+# Define the linear regression model
+def linear_regression(params, feature1=size_log, feature2=bedrooms):
+    return params[0] + feature1 * params[1] + feature2 * params[2]
+
+
+def loss_function(params, targets=price_log, feature1=size_log, feature2=bedrooms):
+    # Set the predicted values
+    predictions = linear_regression(params, feature1, feature2)
+    # Return the mean absolute error loss
+    return keras.losses.mean_absolute_error(targets, predictions)
+
+
+# Define the optimize operation
+opt = keras.optimizers.Adam()
+
+# Initialize the parameters
+params = Variable([0.1, 0.05, 0.02], float32)
+
+# Perform the optimization
+for j in range(10):
+    with tf.GradientTape() as tape:
+        # Compute the loss
+        loss = loss_function(params)
+    # Compute the gradients
+    grads = tape.gradient(loss, [params])
+    # Perform minimization
+    opt.apply_gradients(zip(grads, [params]))
+    print_results(params)
