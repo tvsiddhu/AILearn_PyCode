@@ -1,12 +1,14 @@
 # Introduction to TensorFlow in Python
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from tensorflow import constant
+import matplotlib.pyplot as plt
 
 # 1. Defining data as constants
 # -----------------------------------------------------------------
 print("\n1. Defining data as constants")
 print('-----------------------------------------------------------------')
-
-import pandas as pd
-from tensorflow import constant
 
 # Import the data
 df = pd.read_csv('../../data/12.deep_learning/credit_numpy_array.csv', header=0, index_col=0)
@@ -111,7 +113,6 @@ print("\n6. Reshaping tensors")
 print('-----------------------------------------------------------------')
 
 from tensorflow import reshape
-import pandas as pd
 
 gray_image = pd.read_csv('../../data/12.deep_learning/gray_tensor.csv', header=0, index_col=0)
 gray_tensor = gray_image.to_numpy()
@@ -136,7 +137,6 @@ print("\n7. Optimizing with gradients")
 print('-----------------------------------------------------------------')
 
 from tensorflow import GradientTape, multiply, Variable
-import numpy as np
 
 
 def compute_gradient(x0):
@@ -235,13 +235,14 @@ features = np.array([[1, 2, 3, 4, 5]], np.float32)
 float32 = np.float32
 targets = np.array([2, 4, 6, 8, 10], np.float32)
 
-
 # Initialize a variable named scalar
 scalar = Variable(1.0, float32)
+
 
 # Define the model
 def model(scalar, features=features):
     return scalar * features
+
 
 # Define a loss function
 def loss_function(scalar, features=features, targets=targets):
@@ -250,5 +251,130 @@ def loss_function(scalar, features=features, targets=targets):
     # Return the mean absolute error loss
     return keras.losses.mean_absolute_error(targets, predictions)
 
+
 # Evaluate the loss function and print the loss
 print(loss_function(scalar).numpy())
+
+# 13. Set up a linear regression
+print("\n13. Set up a linear regression")
+print('-----------------------------------------------------------------')
+
+price_log = np.log(price)
+print(price_log.shape)
+
+size = np.array(housing['sqft_living'], np.float32)
+
+size_log = np.log(size)
+print(size_log.shape)
+
+# Define the targets and features
+price_log = Variable(price_log)
+size_log = Variable(size_log)
+
+
+# Define the linear regression model
+def linear_regression(intercept, slope, features=size_log):
+    return intercept + slope * features
+
+
+# Set loss_function() to take the variables as arguments
+def loss_function(intercept, slope, features=size_log, targets=price_log):
+    # Set the predicted values
+    predictions = linear_regression(intercept, slope, features)
+    # Return the mean squared error loss
+    return keras.losses.mean_squared_error(targets, predictions)
+
+
+# Compute the loss for different slope and intercept values
+print("Loss function for slope 0.1 and intercept 0.1:", loss_function(0.1, 0.1).numpy())
+print("Loss function for slope 0.1 and intercept 0.5", loss_function(0.1, 0.5).numpy())
+
+# 14. Train a linear model
+print("\n14. Train a linear model")
+print('-----------------------------------------------------------------')
+
+
+# @TODO: Fix the plot_results function to address deprecated matplotlib 3.10 converter function warning
+def plot_results(intercept, slope):
+    size_range = np.linspace(6, 14, 100)
+    price_pred = [intercept + slope * size for size in size_range]
+    plt.scatter(size_log, price_log, color='black')
+    plt.plot(size_range, price_pred, linewidth=3.0, color='red')
+    plt.xlabel('log(size)')
+    plt.ylabel('log(price)')
+    plt.title('Scatterplot of data and regression line')
+    plt.show()
+
+
+# Initialize an adam optimizer
+opt = keras.optimizers.Adam(0.5)
+
+
+def loss_function(intercept, slope, features=size_log, targets=price_log):
+    # Set the predicted values
+    predictions = linear_regression(intercept, slope, features)
+    # Return the mean squared error loss
+    return keras.losses.mean_squared_error(targets, predictions)
+
+
+intercept = Variable(10.0, float32)
+slope = Variable(0.5, float32)
+
+for j in range(100):
+    with tf.GradientTape() as tape:
+        loss_value = loss_function(intercept, slope)
+    grads = tape.gradient(loss_value, [intercept, slope])
+    opt.apply_gradients(zip(grads, [intercept, slope]))
+
+    if j % 10 == 0:
+        print(loss_function(intercept, slope).numpy())
+
+plot_results(intercept, slope)
+
+# # 15. Multiple linear regression
+# print("\n15. Multiple linear regression")
+# print('-----------------------------------------------------------------')
+#
+# bedrooms = np.array(housing['bedrooms'], np.float32)
+# bathrooms = np.array(housing['bathrooms'], np.float32)
+#
+# bedrooms_log = np.log(bedrooms)
+# bathrooms_log = np.log(bathrooms)
+#
+# # Define the intercept and slope
+# intercept = Variable(0.1, float32)
+# slope_bedrooms = Variable(0.1, float32)
+#
+#
+# def print_results(intercept, slope_bedrooms, slope_bathrooms):
+#     print('The regression line is given by')
+#     print('price =', intercept.numpy(), '+', slope_bedrooms.numpy(), '* bedrooms +', slope_bathrooms.numpy(),
+#           '* bathrooms')
+#
+#
+# # Define the linear regression model
+# def linear_regression(params, feature1=bedrooms_log, feature2=bathrooms):
+#     return params[0] + feature1 * params[1] + feature2 * params[2]
+#
+#
+# # Define the loss function
+# def loss_function(params, feature1=bedrooms_log, feature2=bathrooms, targets=price_log):
+#     # Set the predicted values
+#     predictions = linear_regression(params, feature1, feature2)
+#
+#     # Use the mean absolute error loss
+#     return keras.losses.mean_absolute_error(targets, predictions)
+#
+#
+# # Define the optimize operation
+# opt = keras.optimizers.Adam()
+#
+# # Perform minimization using the Adam optimizer
+# for j in range(10):
+#     with tf.GradientTape() as tape:
+#         loss_value = loss_function(params)
+#     grads = tape.gradient(loss_value, [params])
+#     opt.apply_gradients(zip(grads, [params]))
+#
+#
+# print_results(params[0], params[1], params[2])
