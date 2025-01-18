@@ -1,9 +1,9 @@
 # Introduction to TensorFlow in Python
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 from tensorflow import constant
-import matplotlib.pyplot as plt
 
 # 1. Defining data as constants
 # -----------------------------------------------------------------
@@ -367,3 +367,48 @@ for j in range(10):
     # Perform minimization
     opt.apply_gradients(zip(grads, [params]))
     print_results(params)
+
+# 16. Preparing to batch train
+print("\n16. Preparing to batch train")
+print('-----------------------------------------------------------------')
+
+# Define the intercept and slope
+intercept = Variable(10.0, float32)
+slope = Variable(0.5, float32)
+
+
+# Define the model
+def linear_regression(intercept, slope, features):
+    # Define the predicted values
+    return intercept + slope * features
+
+
+# Define the loss function
+def loss_function(intercept, slope, targets, features):
+    # Define the predicted values
+    predictions = linear_regression(intercept, slope, features)
+    # Return the mean squared error loss
+    return keras.losses.mean_squared_error(targets, predictions)
+
+
+# 17. Training a linear model in batches
+print("\n17. Training a linear model in batches")
+print('-----------------------------------------------------------------')
+
+# Initialize adam optimizer
+opt = keras.optimizers.Adam()
+
+# Load data in batches
+for batch in pd.read_csv(data_path, chunksize=100):
+    size_batch = np.array(batch['sqft_living'], np.float32)
+    price_batch = np.array(batch['price'], np.float32)
+    size_log = np.log(size_batch)
+    price_log = np.log(price_batch)
+
+with tf.GradientTape() as tape:
+    loss_value = loss_function(intercept, slope, price_log, size_log)
+grads = tape.gradient(loss_value, [intercept, slope])
+opt.apply_gradients(zip(grads, [intercept, slope]))
+
+# Print the intercept and slope
+print("intercept: {:0.2f}, slope: {:0.2f}".format(intercept.numpy(), slope.numpy()))
