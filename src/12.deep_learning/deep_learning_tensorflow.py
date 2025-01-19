@@ -489,3 +489,58 @@ predictions = keras.layers.Dense(1, activation='sigmoid')(dense2)
 print("\n shape of dense1:", dense1.shape)
 print("\n shape of dense2:", dense2.shape)
 print("\n shape of predictions:", predictions.shape)
+
+# 21. Binary classification problems
+print("\n21. Binary classification problems")
+print('-----------------------------------------------------------------')
+
+credit_data = pd.read_csv('../../data/12.deep_learning/uci_credit_card.csv', header=0).to_numpy()
+bill_amount_1 = credit_data[:, 12]
+bill_amount_2 = credit_data[:, 13]
+bill_amount_3 = credit_data[:, 14]
+
+bill_amounts = np.column_stack((bill_amount_1, bill_amount_2, bill_amount_3))
+bill_amounts = np.array(bill_amounts, np.float32)
+default = credit_data[:, 24]
+
+# Construct input layer from features
+inputs = constant(bill_amounts)
+
+# Define first dense layer
+dense1 = keras.layers.Dense(3, activation='relu')(inputs)
+
+# Define second dense layer
+dense2 = keras.layers.Dense(2, activation='relu')(dense1)
+
+# Define output layer
+outputs = keras.layers.Dense(1, activation='sigmoid')(dense2)
+
+# Print error for first five examples
+error = default[:5] - outputs.numpy()[:5]
+print("\n error for first five examples:", error)
+
+# 22. Multiclass classification problems
+print("\n22. Multiclass classification problems")
+print('-----------------------------------------------------------------')
+
+# Select the features and targets
+borrower_features = credit_data[:, 12:22]
+borrower_features = np.array(borrower_features, np.float32)
+
+targets = credit_data[:, 24]
+
+# Construct input layer from borrower features
+inputs = constant(borrower_features)
+
+# Define first dense layer
+dense1 = keras.layers.Dense(10, activation='sigmoid')(inputs)
+
+# Define second dense layer
+dense2 = keras.layers.Dense(8, activation='relu')(dense1)
+
+# Define output layer
+outputs = keras.layers.Dense(6, activation='softmax')(dense2)
+
+# Print first five predictions
+print(outputs.numpy()[:5])
+
