@@ -412,3 +412,80 @@ opt.apply_gradients(zip(grads, [intercept, slope]))
 
 # Print the intercept and slope
 print("intercept: {:0.2f}, slope: {:0.2f}".format(intercept.numpy(), slope.numpy()))
+
+# 18. The linear algebra of dense layers
+print("\n18. The linear algebra of dense layers")
+print('-----------------------------------------------------------------')
+
+# Define the features and targets
+borrower_features = np.array([[2., 2., 43]], np.float32)
+
+# Initialize bias1
+bias1 = Variable(1.0)
+
+# Initialize weights1 as 3x2 variable of ones
+weights1 = Variable(tf.ones((3, 2)))
+
+# Perform matrix multiplication of borrower_features and weights1
+product1 = matmul(borrower_features, weights1)
+
+# Apply sigmoid activation function to product1 + bias1
+dense1 = keras.activations.sigmoid(product1 + bias1)
+
+# Print shape of dense1
+print("\n dense1's output shape: ", dense1.shape)
+
+# Initialize bias2 and weights2
+bias2 = Variable(1.0)
+weights2 = Variable(tf.ones((2, 1)))
+
+# Perform matrix multiplication of dense1 and weights2
+product2 = matmul(dense1, weights2)
+
+# Apply activation to product2 + bias2 and print the prediction
+prediction = keras.activations.sigmoid(product2 + bias2)
+print('\n prediction: {}'.format(prediction.numpy()[0, 0]))
+print('\n actual: 1')
+
+# 19. The low-level approach with multiple examples
+print("\n19. The low-level approach with multiple examples")
+print('-----------------------------------------------------------------')
+
+borrower_features = np.array([[3., 3., 23], [2., 1., 24], [1., 1., 49], [1., 1., 49], [2., 1., 29]], np.float32)
+bias1 = Variable(1.0)
+weights1 = Variable(tf.ones((3, 2)))
+
+# Compute the product of borrower_features and weights1
+products1 = matmul(borrower_features, weights1)
+print("\n shape of products1:", products1.shape)
+
+# Apply a sigmoid activation function to products1 + bias1
+dense1 = keras.activations.sigmoid(products1 + bias1)
+
+# Print the shapes of borrower_features, weights1, bias1, and dense1
+print("\n shape of borrower_features:", borrower_features.shape)
+print("\n shape of weights1:", weights1.shape)
+print("\n shape of bias1:", bias1.shape)
+print("\n shape of dense1:", dense1.shape)
+
+# 20. Using the dense layer operation
+print("\n20. Using the dense layer operation")
+print('-----------------------------------------------------------------')
+
+# Define the features and the targets
+borrower_features = pd.read_csv('../../data/12.deep_learning/borrower_features_100.csv', header=None).to_numpy()
+borrower_features = np.array(borrower_features, np.float32)
+
+# Define the first dense layer
+dense1 = keras.layers.Dense(7, activation='sigmoid')(borrower_features)
+
+# Define a dense layer with 3 output nodes
+dense2 = keras.layers.Dense(3, activation='sigmoid')(dense1)
+
+# Define a dense layer with 1 output node
+predictions = keras.layers.Dense(1, activation='sigmoid')(dense2)
+
+# Print the shapes of dense1, dense2, and predictions
+print("\n shape of dense1:", dense1.shape)
+print("\n shape of dense2:", dense2.shape)
+print("\n shape of predictions:", predictions.shape)
