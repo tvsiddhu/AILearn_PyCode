@@ -600,3 +600,83 @@ for j in range(100):
 
 # Print the final values of x_1 and x_2
 print(x_1.numpy(), x_2.numpy())
+
+# 25. Initialization in TensorFlow
+print("\n25. Initialization in TensorFlow")
+print('-----------------------------------------------------------------')
+
+# Define the layer 1 weights
+w1 = Variable(tf.random.normal([23, 7]))
+
+# Initialize the layer 1 bias
+b1 = Variable(tf.ones([7]))
+
+# Define the layer 2 weights
+w2 = Variable(tf.random.normal([7, 1]))
+
+# Define the layer 2 bias
+b2 = Variable(0.0)
+
+# 26. Defining the model and loss function
+print("\n26. Defining the model and loss function")
+print('-----------------------------------------------------------------')
+
+
+# Define the model
+def model(w1, b1, w2, b2, features=borrower_features):
+    # Apply relu activation functions to layer 1
+    layer1 = keras.activations.relu(matmul(features, w1) + b1)
+    # Apply dropout
+    dropout = keras.layers.Dropout(0.25)(layer1)
+    return keras.activations.sigmoid(matmul(dropout, w2) + b2)
+
+
+# Define the loss function
+def loss_function(w1, b1, w2, b2, features=borrower_features, targets=targets):
+    predictions = model(w1, b1, w2, b2)
+    # Pass targets and predictions to the cross entropy loss
+    return keras.losses.binary_crossentropy(targets, predictions)
+
+
+# 27. Training neural networks with TensorFlow
+print("\n27. Training neural networks with TensorFlow")
+print('-----------------------------------------------------------------')
+
+test_features_data = pd.read_csv('../../data/12.deep_learning/nn_test_features.csv', header=0).to_numpy()
+test_features = test_features_data[:, 1:]
+test_features = np.array(test_features, np.float32)
+test_features = constant(test_features)
+
+test_targets_data = pd.read_csv('../../data/12.deep_learning/nn_test_targets.csv', header=0).to_numpy()
+test_target = test_targets_data[:, 1:]
+test_targets = np.array(test_target, np.float32)
+
+opt = keras.optimizers.SGD(learning_rate=0.1)
+
+# Define the model
+def model(w1, b1, w2, b2, features=test_features):
+    # Apply relu activation functions to layer 1
+    layer1 = keras.activations.relu(matmul(features, w1) + b1)
+    # Apply dropout
+    dropout = keras.layers.Dropout(0.25)(layer1)
+    return keras.activations.sigmoid(matmul(dropout, w2) + b2)
+
+
+# Define the loss function
+def loss_function(w1, b1, w2, b2, features=test_features, targets=test_targets):
+    predictions = model(w1, b1, w2, b2)
+    # Pass targets and predictions to the cross entropy loss
+    return keras.losses.binary_crossentropy(targets, predictions)
+#
+# # Train the model
+# for j in range(100):
+#     with tf.GradientTape() as tape:
+#         loss_value = loss_function(w1, b1, w2, b2, test_features, test_targets)
+#     grads = tape.gradient(loss_value, [w1, b1, w2, b2])
+#     opt.apply_gradients(zip(grads, [w1, b1, w2, b2]))
+#
+# # Make predictions with model using test features
+# model_predictions = model(w1, b1, w2, b2, test_features)
+#
+# # Construct the confusion matrix
+# confusion_matrix = tf.math.confusion_matrix(test_targets, model_predictions)
