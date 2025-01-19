@@ -544,3 +544,59 @@ outputs = keras.layers.Dense(6, activation='softmax')(dense2)
 # Print first five predictions
 print(outputs.numpy()[:5])
 
+# 23. The dangers of local minima
+print("\n23. The dangers of local minima")
+print('-----------------------------------------------------------------')
+
+# Initialize x_1 and x_2
+x_1 = Variable(6.0, float32)
+x_2 = Variable(0.3, float32)
+
+
+# Example loss function
+def loss_function(x):
+    return tf.square(x - 3)  # Example: minimize (x - 3)^2
+
+
+opt = keras.optimizers.SGD(learning_rate=0.1)
+
+for j in range(100):
+    # Compute gradients for both x_1 and x_2
+    with tf.GradientTape() as tape:
+        loss_x1 = loss_function(x_1)
+        loss_x2 = loss_function(x_2)
+        total_loss = loss_x1 + loss_x2  # Combine the losses (optional)
+
+    grads = tape.gradient(total_loss, [x_1, x_2])
+    opt.apply_gradients(zip(grads, [x_1, x_2]))
+
+print(x_1.numpy(), x_2.numpy())
+
+# 24. Avoiding local minima
+print("\n24. Avoiding local minima")
+print('-----------------------------------------------------------------')
+
+# Initialize variables
+x_1 = Variable(0.05, dtype=tf.float32)
+x_2 = Variable(0.05, dtype=tf.float32)
+
+# Define optimizers with different momentum values
+opt_1 = tf.keras.optimizers.RMSprop(learning_rate=0.01, momentum=0.99)
+opt_2 = tf.keras.optimizers.RMSprop(learning_rate=0.01, momentum=0.00)
+
+# Optimization loop
+for j in range(100):
+    # Compute gradients and apply updates for x_1
+    with tf.GradientTape() as tape1:
+        loss_x1 = loss_function(x_1)
+    grads_x1 = tape1.gradient(loss_x1, [x_1])
+    opt_1.apply_gradients(zip(grads_x1, [x_1]))
+
+    # Compute gradients and apply updates for x_2
+    with tf.GradientTape() as tape2:
+        loss_x2 = loss_function(x_2)
+    grads_x2 = tape2.gradient(loss_x2, [x_2])
+    opt_2.apply_gradients(zip(grads_x2, [x_2]))
+
+# Print the final values of x_1 and x_2
+print(x_1.numpy(), x_2.numpy())
