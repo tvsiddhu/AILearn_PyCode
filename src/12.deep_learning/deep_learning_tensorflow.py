@@ -653,6 +653,7 @@ test_targets = np.array(test_target, np.float32)
 
 opt = keras.optimizers.SGD(learning_rate=0.1)
 
+
 # Define the model
 def model(w1, b1, w2, b2, features=test_features):
     # Apply relu activation functions to layer 1
@@ -667,16 +668,21 @@ def loss_function(w1, b1, w2, b2, features=test_features, targets=test_targets):
     predictions = model(w1, b1, w2, b2)
     # Pass targets and predictions to the cross entropy loss
     return keras.losses.binary_crossentropy(targets, predictions)
-#
-# # Train the model
-# for j in range(100):
-#     with tf.GradientTape() as tape:
-#         loss_value = loss_function(w1, b1, w2, b2, test_features, test_targets)
-#     grads = tape.gradient(loss_value, [w1, b1, w2, b2])
-#     opt.apply_gradients(zip(grads, [w1, b1, w2, b2]))
-#
-# # Make predictions with model using test features
-# model_predictions = model(w1, b1, w2, b2, test_features)
-#
-# # Construct the confusion matrix
-# confusion_matrix = tf.math.confusion_matrix(test_targets, model_predictions)
+
+
+# Train the model
+for j in range(100):
+    with tf.GradientTape() as tape:
+        loss_value = loss_function(w1, b1, w2, b2, test_features, test_targets)
+    grads = tape.gradient(loss_value, [w1, b1, w2, b2])
+    opt.apply_gradients(zip(grads, [w1, b1, w2, b2]))
+
+# Make predictions with model using test_features
+model_predictions = model(w1, b1, w2, b2, test_features)
+
+# Flatten the model_predictions to match the shape of test_targets
+model_predictions = tf.reshape(model_predictions, [-1])
+
+# Construct the confusion matrix
+confusion_matrix = tf.math.confusion_matrix(test_targets, model_predictions)
+print("\n Confusion matrix: ", confusion_matrix.numpy())
