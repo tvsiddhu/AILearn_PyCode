@@ -1,9 +1,24 @@
 # Introduction to TensorFlow in Python
+import ssl
+import warnings
+
+import keras
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+from keras.src.utils import to_categorical
+from tensorflow import GradientTape, multiply, Variable
+from tensorflow import cast
 from tensorflow import constant
+from tensorflow import ones_like, matmul
+from tensorflow import reduce_sum, reduce_max, reduce_min
+from tensorflow import reshape
+
+warnings.filterwarnings("ignore", category=matplotlib.MatplotlibDeprecationWarning)
+# Register date converters to avoid warning
+pd.plotting.register_matplotlib_converters()
 
 # 1. Defining data as constants
 # -----------------------------------------------------------------
@@ -25,7 +40,6 @@ print('\n The datatype is:', credit_constant.dtype)
 print('\n The shape is:', credit_constant.shape)
 
 # 2. Defining variables
-from tensorflow import Variable
 
 # -----------------------------------------------------------------
 print("\n2. Defining variables")
@@ -47,7 +61,6 @@ print('\n The datatype for B1 is:', B1.dtype)
 # 3. Performing element-wise multiplication
 print("\n3. Performing element-wise multiplication")
 print('-----------------------------------------------------------------')
-from tensorflow import multiply, ones_like, matmul
 
 # Define tensors A1 and A23 as constants
 A1 = constant([1, 2, 3, 4])
@@ -85,8 +98,6 @@ print('\n The error is:', error.numpy())
 print("\n5. Summing over tensor dimensions")
 print('-----------------------------------------------------------------')
 
-from tensorflow import reduce_sum, reduce_max, reduce_min
-
 wealth = constant([[11, 50], [7, 2], [4, 60], [3, 0], [25, 10]])
 # Sum over dimension 0 and 1 of wealth
 total_per_col = reduce_sum(wealth, 0).numpy()
@@ -112,8 +123,6 @@ print("Smallest of rows:", smallest_rows)
 print("\n6. Reshaping tensors")
 print('-----------------------------------------------------------------')
 
-from tensorflow import reshape
-
 gray_image = pd.read_csv('../../data/12.deep_learning/gray_tensor.csv', header=0, index_col=0)
 gray_tensor = gray_image.to_numpy()
 
@@ -135,8 +144,6 @@ print("colour vector shape:", colour_vector.shape)
 # 7. Optimizing with gradients
 print("\n7. Optimizing with gradients")
 print('-----------------------------------------------------------------')
-
-from tensorflow import GradientTape, multiply, Variable
 
 
 def compute_gradient(x0):
@@ -176,8 +183,6 @@ print("Prediction: {}".format(prediction.numpy()))
 print("\n9. Load data using pandas")
 print('-----------------------------------------------------------------')
 
-from tensorflow import cast
-
 # Load the data
 data_path = '../../data/12.deep_learning/kc_house_data.csv'
 
@@ -204,8 +209,6 @@ print("Waterfront:", waterfront)
 # 11. Loss functions in TensorFlow
 print("\n11. Loss functions in TensorFlow")
 print('-----------------------------------------------------------------')
-
-import keras
 
 print("price shape:", price.shape)
 
@@ -581,8 +584,8 @@ x_1 = Variable(0.05, dtype=tf.float32)
 x_2 = Variable(0.05, dtype=tf.float32)
 
 # Define optimizers with different momentum values
-opt_1 = tf.keras.optimizers.RMSprop(learning_rate=0.01, momentum=0.99)
-opt_2 = tf.keras.optimizers.RMSprop(learning_rate=0.01, momentum=0.00)
+opt_1 = keras.optimizers.RMSprop(learning_rate=0.01, momentum=0.99)
+opt_2 = keras.optimizers.RMSprop(learning_rate=0.01, momentum=0.00)
 
 # Optimization loop
 for j in range(100):
@@ -686,3 +689,217 @@ model_predictions = tf.reshape(model_predictions, [-1])
 # Construct the confusion matrix
 confusion_matrix = tf.math.confusion_matrix(test_targets, model_predictions)
 print("\n Confusion matrix: ", confusion_matrix.numpy())
+
+# 28. The sequential model in Keras
+print("\n28. The sequential model in Keras")
+print('-----------------------------------------------------------------')
+
+# Define a Keras sequential model
+model = keras.Sequential()
+
+# Define the first dense layer
+model.add(keras.layers.Dense(16, activation='relu', input_shape=(784,)))
+
+# Define the second dense layer
+model.add(keras.layers.Dense(8, activation='relu'))
+
+# Define the output layer
+model.add(keras.layers.Dense(4, activation='softmax'))
+
+# Print the model architecture
+print("Model architecture: ", model.summary())
+
+# 29. Compiling a sequential model
+print("\n29. Compiling a sequential model")
+print('-----------------------------------------------------------------')
+
+# Define a Keras sequential model
+model = keras.Sequential()
+
+# Define the first dense layer
+model.add(keras.layers.Dense(16, activation='sigmoid', input_shape=(784,)))
+
+# Apply dropout to the first layer's output
+model.add(keras.layers.Dropout(0.25))
+
+# Define the output layer
+model.add(keras.layers.Dense(4, activation='softmax'))
+
+# Compile the model
+model.compile('adam', loss='categorical_crossentropy')
+
+# Print a model summary
+print("Model summary: ", model.summary())
+
+# Defining a multiple input model
+print("\n30. Defining a multiple input model")
+print('-----------------------------------------------------------------')
+
+# Define the first input
+m1_inputs = keras.Input(shape=(784,))
+# Define the second input
+m2_inputs = keras.Input(shape=(784,))
+
+# For model 1, pass the input layer to layer 1 and layer 1 to layer 2
+m1_layer1 = keras.layers.Dense(12, activation='sigmoid')(m1_inputs)
+m1_layer2 = keras.layers.Dense(4, activation='softmax')(m1_layer1)
+
+# For model 2, pass the input layer to layer 1 and layer 1 to layer 2
+m2_layer1 = keras.layers.Dense(12, activation='relu')(m2_inputs)
+m2_layer2 = keras.layers.Dense(4, activation='softmax')(m2_layer1)
+
+# Merge model outputs and define a functional model
+merged = keras.layers.add([m1_layer2, m2_layer2])
+model = keras.Model(inputs=[m1_inputs, m2_inputs], outputs=merged)
+
+# Print a model summary
+print("Model summary: ", model.summary())
+
+# 31. Training with Keras
+print("\n31. Training with Keras")
+print('-----------------------------------------------------------------')
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
+# Define sign language digits data
+# Load EMNIST dataset
+
+emnist = keras.datasets.mnist
+# Load the MNIST dataset
+(x_train, y_train), (x_test, y_test) = emnist.load_data()
+
+# Merge training and test sets for a larger dataset
+x_data = np.concatenate((x_train, x_test), axis=0)
+y_data = np.concatenate((y_train, y_test), axis=0)
+
+# Mapping MNIST digits to approximate letters
+letter_mapping = {4: 0, 8: 1, 6: 2, 0: 3}  # 4 → A, 8 → B, 6 → C, 0 → D
+
+# Filter only images corresponding to these letters
+mask = np.isin(y_data, list(letter_mapping.keys()))
+x_filtered = x_data[mask]
+y_filtered = y_data[mask]
+
+# Convert labels to range (0-3) based on letter_mapping
+y_filtered = np.array([letter_mapping[y] for y in y_filtered])
+
+# Select only 2000 samples
+num_samples = 2000
+x_filtered = x_filtered[:num_samples]
+y_filtered = y_filtered[:num_samples]
+
+# Normalize images (scale pixel values between 0 and 1)
+x_filtered = x_filtered.astype('float32') / 255.0
+
+# Reshape images for CNN input (28x28x1)
+x_filtered = x_filtered.reshape(-1, 28, 28, 1)
+
+# Convert labels to categorical format for classification
+y_filtered = to_categorical(y_filtered, num_classes=4)
+
+# Assign to final variables
+sign_language_features = x_filtered
+sign_language_labels = y_filtered
+
+# Display sample images to verify correctness
+fig, axes = plt.subplots(1, 4, figsize=(10, 5))
+for i, ax in enumerate(axes):
+    ax.imshow(sign_language_features[i].reshape(28, 28), cmap='gray')
+    ax.set_title(f"Label: {np.argmax(sign_language_labels[i])} (A/B/C/D)")
+    ax.axis('off')
+plt.show()
+
+# Print shape confirmation
+print(f"Features shape: {sign_language_features.shape}")  # Expected: (2000, 28, 28, 1)
+print(f"Labels shape: {sign_language_labels.shape}")  # Expected: (2000, 4)
+
+sign_language_features = sign_language_features.reshape(-1, 784)
+print(f"Reshaped Features shape: {sign_language_features.shape}")  # Expected: (, 784)
+
+# Define a Keras sequential model
+model = keras.Sequential()
+
+# Define a hidden layer
+model.add(keras.layers.Dense(16, activation='relu', input_shape=(784,)))
+
+# Define the output layer
+model.add(keras.layers.Dense(4, activation='softmax'))
+
+# Compile the model
+model.compile('SGD', loss='categorical_crossentropy')
+
+# Complete the fitting operation
+model.fit(sign_language_features, sign_language_labels, epochs=5)
+
+# 32. Metrics and validation with Keras
+print("\n32. Metrics and validation with Keras")
+print('-----------------------------------------------------------------')
+
+# Define a Keras sequential model
+model = keras.Sequential()
+
+# Define the first layer
+model.add(keras.layers.Dense(32, activation='sigmoid', input_shape=(784,)))
+
+# Add activation function to classifier
+model.add(keras.layers.Dense(4, activation='softmax'))
+
+# Set the optimizer, loss function, and metrics
+model.compile(optimizer='RMSprop', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Add the number of epochs and the validation split
+model.fit(sign_language_features, sign_language_labels, epochs=10, validation_split=0.1)
+
+# 33. Overfitting detection
+print("\n33. Overfitting detection")
+print('-----------------------------------------------------------------')
+
+# Define a Keras sequential model
+model = keras.Sequential()
+
+# Define the first layer
+model.add(keras.layers.Dense(1024, activation='relu', input_shape=(784,)))
+
+# Add activation function to classifier
+model.add(keras.layers.Dense(4, activation='softmax'))
+
+# Set the optimizer, loss function, and metrics
+model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Add the number of epochs and the validation split
+history = model.fit(sign_language_features, sign_language_labels, epochs=50, validation_split=0.5)
+
+# 34. Preparing to train with Estimators
+print("\n34. Preparing to train with Estimators")
+print('-----------------------------------------------------------------')
+
+# import feature_column
+from tensorflow import feature_column
+
+# Define feature columns for bedrooms and bathrooms
+bedrooms = feature_column.numeric_column("bedrooms")
+bathrooms = feature_column.numeric_column("bathrooms")
+
+# Define the feature columns
+feature_list = [bedrooms, bathrooms]
+
+
+def input_fn():
+    # Define the labels
+    labels = np.array(housing['price'], np.float32)
+    # Define the features
+    features = {'bedrooms': np.array(housing['bedrooms'], np.float32),
+                'bathrooms': np.array(housing['bathrooms'], np.float32)}
+    return features, labels
+
+
+# 35. Defining Estimators
+print("\n35. Defining Estimators")
+print('-----------------------------------------------------------------')
+
+from tensorflow.estimator import DNNRegressor
+
+# Define the model and set the number of steps
+model = DNNRegressor(feature_columns=feature_list, hidden_units=[2, 2])
+model.train(input_fn, steps=1)
