@@ -5,12 +5,19 @@ print("--------------------------")
 
 import warnings
 
-warnings.simplefilter("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 import keras
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import numpy as np
 import pandas as pd
 import seaborn as sns
+
+# Disable automatic date conversion globally
+import matplotlib.units as munits
+munits.registry.clear()
+
 
 # from tensorflow.python.keras.layers import Dense
 # Import the Sequential model and Dense layer
@@ -103,18 +110,32 @@ print("--------------------------")
 
 def plot_orbit(model_preds):
     axeslim = int(len(model_preds) / 2)
-    plt.plot(np.arange(-axeslim, axeslim + 1), np.arange(-axeslim, axeslim + 1) ** 2, color="mediumslateblue")
-    plt.plot(np.arange(-axeslim, axeslim + 1), model_preds, color="orange")
-    plt.axis([-40, 41, -5, 550])
-    plt.legend(["Scientist's Orbit", 'Your orbit'], loc="lower left")
-    plt.title("Predicted orbit vs Scientist's Orbit")
+    """
+    This function takes a model and uses it to plot the predicted trajectory of a meteor in the y-x plane."""
+
+    fig, ax = plt.subplots()
+
+    # Plot the data
+    ax.plot(np.arange(-axeslim, axeslim + 1), np.arange(-axeslim, axeslim + 1) ** 2, color="mediumslateblue",
+            label="Scientist's Orbit")
+    ax.plot(np.arange(-axeslim, axeslim + 1), model_preds, color="orange", label="Your orbit")
+
+    # Set axis limits using set methods
+    ax.set_xlim(-40, 41)
+    ax.set_ylim(-5, 550)
+
+    # Use set methods for title and legend
+    ax.set_title("Predicted orbit vs Scientist's Orbit")
+    ax.legend(loc="lower left")
+
+    # Show the plot
     plt.show()
 
 
 # Predict the twenty minutes orbit
 twenty_min_orbit = model.predict(np.arange(-10, 11))
 
-# Plot the twenty minute orbit
+# Plot the twenty minutes orbit
 plot_orbit(twenty_min_orbit)
 
 # Predict the eighty minute orbit
@@ -244,13 +265,14 @@ model.add(keras.layers.Dense(4, activation='softmax'))
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Split the data into train and test
-coord_train, coord_test, competitors_train, competitors_test = train_test_split(coordinates, competitors, test_size=0.25)
+coord_train, coord_test, competitors_train, competitors_test = train_test_split(coordinates, competitors,
+                                                                                test_size=0.25)
 
 # Train your model on the training data for 200 epochs
 model.fit(coord_train, competitors_train, epochs=200)
 
 # Evaluate your model accuracy on the test data
-accuracy = model.evaluate(coord_test,competitors_test)[1]
+accuracy = model.evaluate(coord_test, competitors_test)[1]
 
 # Print accuracy
 print('Accuracy:', accuracy)
@@ -298,4 +320,202 @@ preds_chosen = [np.argmax(pred) for pred in preds]
 # Print the most likely competitor for each throw
 print(preds_chosen)
 
+# 13. An irrigation machine
+print("An irrigation machine")
+print("--------------------------")
+
+# Import the data
+irrigation = pd.read_csv("../../data/12.deep_learning/irrigation_machine.csv", header=0)
+irrigation = irrigation.drop('Unnamed: 0', axis=1)
+
+sensors = irrigation.drop(['parcel_0', 'parcel_1', 'parcel_2'], axis=1)
+parcels = irrigation[['parcel_0', 'parcel_1', 'parcel_2']]
+
+print("Sensor data:", sensors.head())
+print("Parcel data:", parcels.head())
+
+# Instantiate a Sequential model
+model = keras.Sequential()
+
+# Add a hidden layer of 64 neurons and a 20 neuron input
+model.add(keras.layers.Dense(64, input_shape=(20,), activation='relu'))
+
+# Add an output layer of 3 neurons with sigmoid activation
+model.add(keras.layers.Dense(3, activation='sigmoid'))
+
+# Compile your model with adam and binary crossentropy loss
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Display a summary of your model
+model.summary()
+
+sensors_train = sensors.iloc[:1000]
+sensors_test = sensors.iloc[1000:]
+parcel_train = parcels.iloc[:1000]
+parcel_test = parcels.iloc[1000:]
+
+sensors_train, sensors_test, parcels_train, parcels_test = train_test_split(sensors, parcels, test_size=0.3)
+
+# Train your model for 100 epochs using sensor_train and parcel_train and validation split 0.2
+model.fit(sensors_train, parcels_train, epochs=100, validation_split=0.2)
+
+# Predict on sensor_test and assign to preds with round 2 decimal places
+preds = model.predict(sensors_test)
+preds_rounded = np.round(preds, 2)
+
+# Print preds vs true values
+print("{:30} | {}".format('Raw Model Predictions', 'True labels'))
+for i, pred in enumerate(preds_rounded):
+    print("{} | {}".format(pred, parcels_test.iloc[i].values))
+
+# Evaluate your model accuracy on the test data
+accuracy = model.evaluate(sensors_test, parcels_test)[1]
+
+# Print accuracy
+print('Accuracy:', accuracy)
+
+# 14. The history callback
+print("The history callback")
+print("--------------------------")
+
+X = sensors
+y = parcels
+
+# Split the data into train and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+# Create the model
+model = keras.Sequential()
+model.add(keras.layers.Dense(64, input_shape=(20,), activation='relu'))
+model.add(keras.layers.Dense(3, activation='sigmoid'))
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Train the model and store the training object
+h_callback = model.fit(X_train, y_train, epochs=25, validation_data=(X_test, y_test))
+
+
+def plot_loss(loss, val_loss):
+    """
+    This function plots the training and validation loss"""
+
+    # Create a figure and axis
+    fig, ax = plt.subplots()
+
+    # Plot loss values
+    ax.plot(loss, label="Train")
+    ax.plot(val_loss, label="Test")
+
+    # Set labels and title
+    ax.set_title("Model loss")
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Loss")
+
+    # Add legend
+    ax.legend(loc="upper right")
+
+    # Show the plot
+    plt.show()
+
+
+def plot_accuracy(acc, val_acc):
+    """
+
+    :param acc:
+    :param val_acc:
+    :return:
+    """
+
+    # Create a figure and axis
+    fig, ax = plt.subplots()
+
+    # Plot accuracy values and ensure x-axis uses numeric values
+    ax.plot(np.arange(len(acc)), acc, label="Train")
+    ax.plot(np.arange(len(val_acc)), val_acc, label="Test")
+
+    plt.gca().xaxis.set_major_formatter(mdates.AutoDateFormatter(mdates.AutoDateLocator()))
+
+    # Set labels and title
+    ax.set_title("Model Accuracy")
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Accuracy")
+
+    # Add legend
+    ax.legend(loc="upper left")
+
+    # Show the plot
+    plt.show()
+
+
+# Plot the training loss
+plot_loss(h_callback.history['loss'], h_callback.history['val_loss'])
+
+# Plot the training accuracy
+plot_accuracy(h_callback.history['accuracy'], h_callback.history['val_accuracy'])
+
+# 15. Early stopping your model
+print("Early stopping your model")
+print("--------------------------")
+
+banknotes = pd.read_csv("../../data/12.deep_learning/banknotes.csv", header=0)
+
+X = banknotes.iloc[:, 0:4].apply(pd.to_numeric, errors='coerce').fillna(0)
+y = banknotes.iloc[:, 4].apply(pd.to_numeric, errors='coerce').fillna(0)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+# Create a Sequential model
+model = keras.Sequential()
+
+# Add a Dense layer with 12 neurons and an input of 4 neurons
+model.add(keras.layers.Dense(12, input_shape=(4,), activation='relu'))
+
+# Add a Dense layer with 8 neurons
+model.add(keras.layers.Dense(8, activation='relu'))
+
+# Add a final Dense layer with 1 neuron
+model.add(keras.layers.Dense(1, activation='sigmoid'))
+
+# Compile your model
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Define a callback to monitor val_acc
+monitor_val_acc = keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=5)
+
+# Train your model using the early stopping callback
+model.fit(X_train, y_train, epochs=1000, validation_data=(X_test, y_test), callbacks=[monitor_val_acc])
+
+# 16. A combination of callbacks
+print("A combination of callbacks")
+print("--------------------------")
+
+X = sensors
+y = parcels
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+# Create a Sequential model
+model = keras.Sequential()
+
+# Add a Dense layer with 64 neurons and an input of 20 neurons
+model.add(keras.layers.Dense(64, input_shape=(20,), activation='relu'))
+
+# Add two Dense layers with 30 neurons
+model.add(keras.layers.Dense(30, activation='relu'))
+model.add(keras.layers.Dense(30, activation='relu'))
+
+# Add a final Dense layer with 3 neurons and sigmoid activation
+model.add(keras.layers.Dense(3, activation='sigmoid'))
+
+# Compile your model
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+
+# Early stop on validation accuracy
+monitor_val_acc = keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=3)
+
+# Save the best model as best_banknote_model.h5
+modelCheckpoint = keras.callbacks.ModelCheckpoint('best_banknote_model.h5', save_best_only=True)
+
+# Fit your model passing in the callbacks
+model.fit(X_train, y_train, epochs=1000000, validation_data=(X_test, y_test), callbacks=[monitor_val_acc, modelCheckpoint])
 
