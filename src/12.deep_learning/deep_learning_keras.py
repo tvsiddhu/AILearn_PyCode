@@ -8,7 +8,7 @@ import matplotlib.units as munits
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from scikeras.wrappers import KerasClassifier
+# from scikeras.wrappers import KerasClassifier
 # Import the data from sklearn
 from sklearn import datasets
 from sklearn.datasets import load_breast_cancer
@@ -170,37 +170,38 @@ print("A binary classification model")
 print("--------------------------")
 
 # Instantiate a Sequential model
-model = keras.Sequential()
+banknotes_model = keras.Sequential()
 
 # Add a Dense layer with 1 neuron and an input of 4 neurons with signmoid activation
-model.add(keras.layers.Dense(1, input_shape=(4,), activation="sigmoid"))
+banknotes_model.add(keras.layers.Dense(1, input_shape=(4,), activation="sigmoid"))
 
 # Compile your model
-model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['accuracy'])
+banknotes_model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['accuracy'])
 
 # Display a summary of your model
-model.summary()
+banknotes_model.summary()
 
 # 8. Is the banknote fake or authentic?
 print("Is the banknote fake or authentic?")
 print("--------------------------")
 
 # Split the data into train and test
-from sklearn.model_selection import train_test_split, RandomizedSearchCV, KFold
+from sklearn.model_selection import train_test_split
 
 # Import the data
 banknotes_dataset = pd.read_csv("../../data/12.deep_learning/banknotes.csv", header=0)
 
-X = banknotes_dataset.iloc[:, 0:4].apply(pd.to_numeric, errors='coerce').fillna(0)
-y = banknotes_dataset.iloc[:, 4].apply(pd.to_numeric, errors='coerce').fillna(0)
+banknotes_X = banknotes_dataset.iloc[:, 0:4].apply(pd.to_numeric, errors='coerce').fillna(0)
+banknotes_y = banknotes_dataset.iloc[:, 4].apply(pd.to_numeric, errors='coerce').fillna(0)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30)
+banknotes_X_train, banknotes_X_test, banknotes_y_train, banknotes_y_test = train_test_split(banknotes_X, banknotes_y,
+                                                                                            test_size=0.30)
 
 # Train your model for 20 epochs
-model.fit(X_train, y_train, epochs=20)
+banknotes_model.fit(banknotes_X_train, banknotes_y_train, epochs=20)
 
 # Evaluate your model accuracy on the test set
-accuracy = model.evaluate(X_test, y_test)[1]
+accuracy = banknotes_model.evaluate(banknotes_X_test, banknotes_y_test)[1]
 
 # Print accuracy
 print('Accuracy:', accuracy)
@@ -745,117 +746,106 @@ print("Preparing a model for tuning")
 print("--------------------------")
 
 # Import the data
-
+# Removing this for now
+# cancer_dataset = load_breast_cancer(return_X_y=True)
 cancer = load_breast_cancer(as_frame=True)['frame']
-
-print(cancer.columns)
-
 X = cancer.drop('target', axis=1)
 y = cancer['target']
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+print(X)
+print(y)
 
-def create_model():
-    # Create an Adam optimizer with the given learning rate
-    opt = keras.optimizers.Adam(learning_rate=0.01)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-    # Create your binary classification model
-    model = keras.Sequential()
-    model.add(keras.layers.Dense(128, input_shape=(30,), activation='relu'))
-    model.add(keras.layers.Dense(256, activation='relu'))
-    model.add(keras.layers.Dense(1, activation='sigmoid'))
-
-    # Compile your model with your optimizer, loss, and metrics
-    model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
-
-    return model
 
 # Creates a model given an activation and learning rate
 def create_model(learning_rate, activation):
     # Create an Adam optimizer with the given learning rate
-    opt = keras.optimizers.Adam(learning_rate=learning_rate)
+    opt = keras.optimizers.Adam(learning_rate)
 
     # Create your binary classification model
-    model = keras.Sequential()
-    model.add(keras.layers.Dense(128, input_shape=(30,), activation=activation))
-    model.add(keras.layers.Dense(256, activation=activation))
-    model.add(keras.layers.Dense(1, activation='sigmoid'))
+    bin_model = keras.Sequential()
+    bin_model.add(keras.layers.Dense(128, input_shape=(30,), activation=activation))
+    bin_model.add(keras.layers.Dense(256, activation=activation))
+    bin_model.add(keras.layers.Dense(1, activation='sigmoid'))
 
     # Compile your model with your optimizer, loss, and metrics
-    model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
-
-    return model
+    bin_model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
+    return bin_model
 
 
 # 26. Tuning the model parameters
 print("Tuning the model parameters")
 print("--------------------------")
 
+# Import KerasClassifier
+from scikeras.wrappers import KerasClassifier
+from sklearn.model_selection import RandomizedSearchCV, KFold  # , cross_val_score
+
 # Create a KerasClassifier
 model = KerasClassifier(build_fn=create_model)
 
 # Define the parameters to try out
-params = {'activation': ['relu', 'tanh'], 'batch_size': [32, 128, 256], 'epochs': [50, 100],
+params = {'activation': ['relu', 'tanh'], 'batch_size': [32, 128, 256], 'epochs': [50, 100, 200],
           'learning_rate': [0.1, 0.01, 0.001]}
 
 # Create a randomize search cv object passing in the parameters to try
-random_search = RandomizedSearchCV(model, param_distributions=params, cv=3)
+random_search = RandomizedSearchCV(model, param_distributions=params, cv=KFold(3), n_iter=5)
 
+# Running random_search.fit
+# random_search.fit(X_train, y_train)
 
-# Running random_search.fit(X,y) would start the search, but it takes too long!
-def print_results(results):
-    print('Best Accuracy: {}\nBest params: {}'.format(results.best_score_, results.best_params_))
+# 27. Training with cross-validation
+print("Training with cross-validation")
+print("--------------------------")
 
-    means = results.cv_results_['mean_test_score']
-    stds = results.cv_results_['std_test_score']
-    params = results.cv_results_['params']
+# Create a KerasClassifier
+model = KerasClassifier(build_fn=create_model(learning_rate=0.001, activation='relu'), epochs=50, batch_size=128,
+                        verbose=0, model_kwargs={})
 
-    for mean, stdev, param in zip(means, stds, params):
-        print('Mean: {}, Stdev: {}, with: {}'.format(mean, stdev, param))
+# Commenting the below lines out due to incompatability between scikeras and sklearn cross_val_score and I don't want
+# to downgrade scikit-learn to fix this
 
-
-# print_results(random_search.fit(X, y))
-
-# # 27. Training with cross-validation
-# print("Training with cross-validation")
-# print("--------------------------")
-#
-# # Create a KerasClassifier
-# model = KerasClassifier(build_fn=create_model(learning_rate=0.001, activation='relu'), epochs=50, batch_size=128,
-#                         verbose=0)
-#
-#
-# def cross_val_score(model, X, y, cv):
-#     """
-#     This function performs cross-validation on a Keras model
-#     """
-#
-#     # Create a KFold object
-#     kf = KFold(n_splits=cv)
-#
-#     # Initialize some lists to keep track of scores
-#     scores = []
-#
-#     # Loop through the indices the split() method returns
-#     for train_index, test_index in kf.split(X):
-#         # Training and testing data points
-#         X_train, X_test = X[train_index], X[test_index]
-#         y_train, y_test = y[train_index], y[test_index]
-#
-#         # Fit the model
-#         model.fit(X_train, y_train)
-#
-#         # Evaluate the model
-#         scores.append(model.evaluate(X_test, y_test)[1])
-#
-#     return scores
-#
-#
 # # Calculate the accuracy score for each fold
-# kfolds = cross_val_score(model, X, y, cv=3)
+# kfolds = cross_val_score(model, X_train, y_train, cv=3)
 #
 # # Print the mean accuracy
-# print('The mean accuracy was:', np.mean(kfolds))
+# print('The mean accuracy was:', kfolds.mean())
 #
 # # Print the accuracy standard deviation
-# print('With a standard deviation of:', np.std(kfolds))
+# print('With a standard deviation of:', kfolds.std())
+
+# 28. It's a flow of tensors
+print("It's a flow of tensors")
+print("--------------------------")
+
+# Import the data
+print("banknotes_X_test:", banknotes_X_test)
+print("banknotes_y_test:", banknotes_y_test)
+
+# Instantiate a Sequential model
+banknotes_model = keras.Sequential()
+
+# Add a Dense layer with 1 neuron and an input of 4 neurons with signmoid activation
+banknotes_model.add(keras.layers.Dense(2, input_shape=(4,), activation="sigmoid"))
+
+# Add an output layer
+banknotes_model.add(keras.layers.Dense(1))
+
+# Compile your model
+banknotes_model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Display a summary of your model
+banknotes_model.summary()
+
+# Fit the model
+banknotes_model.fit(banknotes_X_train, banknotes_y_train, epochs=20)
+
+# Import keras backend
+import tensorflow as tf
+
+# Input tensor from the 1st layer of the model
+inp = banknotes_model.layers[0].input
+
+# Output tensor from the 1st layer of the model
+out = banknotes_model.layers[0].output
