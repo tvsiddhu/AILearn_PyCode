@@ -592,3 +592,75 @@ plt.plot(training_sizes, train_accs, 'o-', label='Training Accuracy')
 plt.plot(training_sizes, test_accs, 'o-', label='Test Accuracy')
 plt.legend()
 plt.show()
+
+# 20. Comparing activation functions
+print("Comparing activation functions")
+print("--------------------------")
+
+
+def get_model(act_function):
+    """
+    This function returns a compiled neural network model of a certain activation function
+    """
+
+    # Create a Sequential model
+    model = keras.Sequential()
+
+    # Add a Dense layer with 64 neurons and relu activation
+    model.add(keras.layers.Dense(64, input_shape=(64,), activation=act_function))
+
+    # Add a Dense layer with 10 output neurons and softmax activation
+    model.add(keras.layers.Dense(10, activation='softmax'))
+
+    # Compile your model
+    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+    return model
+
+
+# Activation functions to try
+activations = ['relu', 'leaky_relu', 'sigmoid', 'tanh']
+
+# Loop over the activation functions
+activation_results = {}
+
+for act in activations:
+    # Get a new model with the current activation
+    model = get_model(act)
+
+    # Fit the model
+    h_callback = model.fit(X_train, y_train, epochs=100, validation_data=(X_test, y_test), verbose=0)
+
+    # Store the history callback results
+    activation_results[act] = h_callback
+
+    # Plot the learning curves
+    plot_loss(h_callback.history['loss'], h_callback.history['val_loss'])
+
+    # Print the accuracy
+    print("Accuracy with", act, ":", model.evaluate(X_test, y_test)[1])
+
+# 21. Comparing activation functions II
+print("Comparing activation functions II")
+print("--------------------------")
+
+val_loss_per_function = {}
+val_acc_per_function = {}
+
+for k, v in activation_results.items():
+    val_loss_per_function[k] = v.history['val_loss']
+    val_acc_per_function[k] = v.history['val_accuracy']
+
+# Create a dataframe from val_loss_per_function
+val_loss = pd.DataFrame(val_loss_per_function)
+
+# Call plot on the dataframe
+val_loss.plot()
+plt.show()
+
+# Create a dataframe from val_acc_per_function
+val_acc = pd.DataFrame(val_acc_per_function)
+
+# Call plot on the dataframe
+val_acc.plot()
+plt.show()
