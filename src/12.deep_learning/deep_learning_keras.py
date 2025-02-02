@@ -1,21 +1,23 @@
-# Sourcefile for deep learning with keras
-# 1. Hello Nets
-print("Hello Nets")
-print("--------------------------")
-
+# Disable automatic date conversion globally
 import warnings
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-
 import keras
-import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import matplotlib.units as munits
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from scikeras.wrappers import KerasClassifier
+# Import the data from sklearn
+from sklearn import datasets
+from sklearn.datasets import load_breast_cancer
 
-# Disable automatic date conversion globally
-import matplotlib.units as munits
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+# 1. Hello Nets
+print("Hello Nets")
+print("--------------------------")
 
 munits.registry.clear()
 
@@ -138,10 +140,10 @@ twenty_min_orbit = model.predict(np.arange(-10, 11))
 # Plot the twenty minutes orbit
 plot_orbit(twenty_min_orbit)
 
-# Predict the eighty minute orbit
+# Predict the eighty-minute orbit
 eighty_min_orbit = model.predict(np.arange(-40, 41))
 
-# Plot the eighty minute orbit
+# Plot the eighty-minute orbit
 plot_orbit(eighty_min_orbit)
 
 # 6. Exploring dollar bills
@@ -184,7 +186,7 @@ print("Is the banknote fake or authentic?")
 print("--------------------------")
 
 # Split the data into train and test
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, RandomizedSearchCV, KFold
 
 # Import the data
 banknotes_dataset = pd.read_csv("../../data/12.deep_learning/banknotes.csv", header=0)
@@ -523,9 +525,6 @@ model.fit(X_train, y_train, epochs=1000000, validation_data=(X_test, y_test),
 print("Learning the digits")
 print("--------------------------")
 
-# Import the data from sklearn
-from sklearn import datasets
-
 digits = datasets.load_digits()
 
 X = digits.data
@@ -664,3 +663,199 @@ val_acc = pd.DataFrame(val_acc_per_function)
 # Call plot on the dataframe
 val_acc.plot()
 plt.show()
+
+# 22. Changing batch sizes
+print("Changing batch sizes")
+print("--------------------------")
+
+# Create a Sequential model
+model = get_model('relu')
+
+# Fit your model for 5 epochs with a batch size of 1
+model.fit(X_train, y_train, epochs=5, batch_size=1)
+
+print("Accuracy with batch size of 1:", model.evaluate(X_test, y_test)[1])
+
+# Fit your model for 5 epochs with a batch size of the training set
+model.fit(X_train, y_train, epochs=5, batch_size=len(X_train))
+
+print("Accuracy with batch size of training set:", model.evaluate(X_test, y_test)[1])
+
+# 23. Batch normalizing a familiar model
+print("Batch normalizing a familiar model")
+print("--------------------------")
+
+# Build your deep network
+batchnorm_model = keras.Sequential()
+batchnorm_model.add(keras.layers.Dense(50, input_shape=(64,), activation='relu', kernel_initializer='normal'))
+batchnorm_model.add(keras.layers.BatchNormalization())
+batchnorm_model.add(keras.layers.Dense(50, activation='relu', kernel_initializer='normal'))
+batchnorm_model.add(keras.layers.BatchNormalization())
+batchnorm_model.add(keras.layers.Dense(50, activation='relu', kernel_initializer='normal'))
+batchnorm_model.add(keras.layers.BatchNormalization())
+batchnorm_model.add(keras.layers.Dense(10, activation='softmax', kernel_initializer='normal'))
+
+# Compile your model with sgd
+batchnorm_model.compile(optimizer='sgd', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+print("Batch normalization model summary:")
+batchnorm_model.summary()
+
+# 24. Batch normalization effects
+print("Batch normalization effects")
+print("--------------------------")
+
+standard_model = get_model('relu')
+
+# Train your standard model, storing its history callback
+standard_model = keras.Sequential()
+standard_model.add(keras.layers.Dense(50, input_shape=(64,), activation='relu', kernel_initializer='normal'))
+standard_model.add(keras.layers.Dense(50, activation='relu', kernel_initializer='normal'))
+standard_model.add(keras.layers.Dense(50, activation='relu', kernel_initializer='normal'))
+standard_model.add(keras.layers.Dense(10, activation='softmax', kernel_initializer='normal'))
+
+standard_model.compile(optimizer='sgd', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+print("Standard model summary:", standard_model.summary())
+
+# Train your standard model, storing its history callback
+h1_callback = standard_model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test), verbose=0)
+
+# Train the batch normalized model you recently built, store its history callback
+h2_callback = batchnorm_model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test), verbose=0)
+
+
+def compare_histories_acc(h1, h2):
+    """
+    This function compares two Keras model histories
+    """
+
+    plt.plot(h1.history['accuracy'], 'b', h1.history['val_accuracy'], 'r')
+    plt.plot(h2.history['accuracy'], 'g', h2.history['val_accuracy'], 'm')
+    plt.title('Batch Normalization Effects')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.legend(['Train', 'Test', 'Train with Batch Normalization', 'Test with Batch Normalization'])
+    plt.show()
+
+
+# call compare_histories_acc passing in both model histories
+compare_histories_acc(h1_callback, h2_callback)
+
+# 25. Preparing a model for tuning
+print("Preparing a model for tuning")
+print("--------------------------")
+
+# Import the data
+
+cancer = load_breast_cancer(as_frame=True)['frame']
+
+print(cancer.columns)
+
+X = cancer.drop('target', axis=1)
+y = cancer['target']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+def create_model():
+    # Create an Adam optimizer with the given learning rate
+    opt = keras.optimizers.Adam(learning_rate=0.01)
+
+    # Create your binary classification model
+    model = keras.Sequential()
+    model.add(keras.layers.Dense(128, input_shape=(30,), activation='relu'))
+    model.add(keras.layers.Dense(256, activation='relu'))
+    model.add(keras.layers.Dense(1, activation='sigmoid'))
+
+    # Compile your model with your optimizer, loss, and metrics
+    model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
+
+    return model
+
+# Creates a model given an activation and learning rate
+def create_model(learning_rate, activation):
+    # Create an Adam optimizer with the given learning rate
+    opt = keras.optimizers.Adam(learning_rate=learning_rate)
+
+    # Create your binary classification model
+    model = keras.Sequential()
+    model.add(keras.layers.Dense(128, input_shape=(30,), activation=activation))
+    model.add(keras.layers.Dense(256, activation=activation))
+    model.add(keras.layers.Dense(1, activation='sigmoid'))
+
+    # Compile your model with your optimizer, loss, and metrics
+    model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
+
+    return model
+
+
+# 26. Tuning the model parameters
+print("Tuning the model parameters")
+print("--------------------------")
+
+# Create a KerasClassifier
+model = KerasClassifier(build_fn=create_model)
+
+# Define the parameters to try out
+params = {'activation': ['relu', 'tanh'], 'batch_size': [32, 128, 256], 'epochs': [50, 100],
+          'learning_rate': [0.1, 0.01, 0.001]}
+
+# Create a randomize search cv object passing in the parameters to try
+random_search = RandomizedSearchCV(model, param_distributions=params, cv=3)
+
+
+# Running random_search.fit(X,y) would start the search, but it takes too long!
+def print_results(results):
+    print('Best Accuracy: {}\nBest params: {}'.format(results.best_score_, results.best_params_))
+
+    means = results.cv_results_['mean_test_score']
+    stds = results.cv_results_['std_test_score']
+    params = results.cv_results_['params']
+
+    for mean, stdev, param in zip(means, stds, params):
+        print('Mean: {}, Stdev: {}, with: {}'.format(mean, stdev, param))
+
+
+# print_results(random_search.fit(X, y))
+
+# # 27. Training with cross-validation
+# print("Training with cross-validation")
+# print("--------------------------")
+#
+# # Create a KerasClassifier
+# model = KerasClassifier(build_fn=create_model(learning_rate=0.001, activation='relu'), epochs=50, batch_size=128,
+#                         verbose=0)
+#
+#
+# def cross_val_score(model, X, y, cv):
+#     """
+#     This function performs cross-validation on a Keras model
+#     """
+#
+#     # Create a KFold object
+#     kf = KFold(n_splits=cv)
+#
+#     # Initialize some lists to keep track of scores
+#     scores = []
+#
+#     # Loop through the indices the split() method returns
+#     for train_index, test_index in kf.split(X):
+#         # Training and testing data points
+#         X_train, X_test = X[train_index], X[test_index]
+#         y_train, y_test = y[train_index], y[test_index]
+#
+#         # Fit the model
+#         model.fit(X_train, y_train)
+#
+#         # Evaluate the model
+#         scores.append(model.evaluate(X_test, y_test)[1])
+#
+#     return scores
+#
+#
+# # Calculate the accuracy score for each fold
+# kfolds = cross_val_score(model, X, y, cv=3)
+#
+# # Print the mean accuracy
+# print('The mean accuracy was:', np.mean(kfolds))
+#
+# # Print the accuracy standard deviation
+# print('With a standard deviation of:', np.std(kfolds))
