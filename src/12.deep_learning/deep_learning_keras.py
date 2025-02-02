@@ -16,8 +16,8 @@ import seaborn as sns
 
 # Disable automatic date conversion globally
 import matplotlib.units as munits
-munits.registry.clear()
 
+munits.registry.clear()
 
 # from tensorflow.python.keras.layers import Dense
 # Import the Sequential model and Dense layer
@@ -509,7 +509,6 @@ model.add(keras.layers.Dense(3, activation='sigmoid'))
 # Compile your model
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-
 # Early stop on validation accuracy
 monitor_val_acc = keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=3)
 
@@ -517,5 +516,79 @@ monitor_val_acc = keras.callbacks.EarlyStopping(monitor='val_accuracy', patience
 modelCheckpoint = keras.callbacks.ModelCheckpoint('best_banknote_model.h5', save_best_only=True)
 
 # Fit your model passing in the callbacks
-model.fit(X_train, y_train, epochs=1000000, validation_data=(X_test, y_test), callbacks=[monitor_val_acc, modelCheckpoint])
+model.fit(X_train, y_train, epochs=1000000, validation_data=(X_test, y_test),
+          callbacks=[monitor_val_acc, modelCheckpoint])
 
+# 17. Learning the digits
+print("Learning the digits")
+print("--------------------------")
+
+# Import the data from sklearn
+from sklearn import datasets
+
+digits = datasets.load_digits()
+
+X = digits.data
+y = digits.target
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+# Create a Sequential model
+model = keras.Sequential()
+
+# Add a Dense layer with 16 neurons with relu activation and an input shape of (64,)
+model.add(keras.layers.Dense(16, input_shape=(64,), activation='relu'))
+
+# Add a Dense layer with 10 output neurons and softmax activation
+model.add(keras.layers.Dense(10, activation='softmax'))
+
+# Compile your model
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+# Test if your model is well assembled by predicting before training
+preds = model.predict(X_test)
+
+# Print preds
+print('Predictions:', preds)
+
+# 18. Is the model overfitting?
+print("Is the model overfitting?")
+print("--------------------------")
+
+# Train your model for 60 epochs, using X_test and y_test as validation data
+h_callback = model.fit(X_train, y_train, epochs=60, validation_data=(X_test, y_test), verbose=0)
+
+# Extract from the h_callback object loss and val_loss to plot the learning curve
+plot_loss(h_callback.history['loss'], h_callback.history['val_loss'])
+
+# 19. Do we need more data?
+print("Do we need more data?")
+print("--------------------------")
+
+# Store initial model weights
+initial_weights = model.get_weights()
+
+# List for storing accuracies
+train_accs = []
+test_accs = []
+training_sizes = [100, 200, 300, 400, 500, 600, 700, 800, 900]
+
+# Train the model with different batch sizes
+for size in training_sizes:
+    # Get a fraction of data (training_size out of X_train)
+    X_train_frac, y_train_frac = X_train[:size], y_train[:size]
+
+    # Reset the model to the initial weights and train it on the new data
+    model.set_weights(initial_weights)
+    model.fit(X_train_frac, y_train_frac, epochs=50, verbose=0,
+              callbacks=[keras.callbacks.EarlyStopping(monitor='loss')])
+
+    # Evaluate and store both: the training data and the test data
+    train_accs.append(model.evaluate(X_train, y_train)[1])
+    test_accs.append(model.evaluate(X_test, y_test)[1])
+
+# Plot train vs test accuracies
+plt.plot(training_sizes, train_accs, 'o-', label='Training Accuracy')
+plt.plot(training_sizes, test_accs, 'o-', label='Test Accuracy')
+plt.legend()
+plt.show()
