@@ -1047,7 +1047,7 @@ mnist_X_train = np.reshape(mnist_X_train, [-1, 28, 28, 1])
 mnist_X_test = np.reshape(mnist_X_test, [-1, 28, 28, 1])
 
 cnn_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-cnn_model.fit(mnist_X_train, mnist_y_train, epochs=5, batch_size=32);
+cnn_model.fit(mnist_X_train, mnist_y_train, epochs=3, batch_size=32);
 
 first_layer_output = cnn_model.layers[0].output
 
@@ -1095,3 +1095,105 @@ preds = resnet_model.predict(img_ready)
 
 # Decode the first three predictions
 print('Predicted:', keras.applications.resnet50.decode_predictions(preds, top=3)[0])
+
+# 37. Text prediction with LSTMs
+print("Text prediction with LSTMs")
+print("--------------------------")
+
+import keras_preprocessing.text as kpt
+
+# Import the data
+text = '''
+it is not the strength of the body but the strength of the spirit it is useless to meet revenge 
+with revenge it will heal nothing even the smallest person can change the course of history all we have 
+to decide is what to do with the time that is given us the burned hand teaches best after that advice about 
+fire goes to the heart END
+'''
+# Split text into an array of words
+words = text.split()
+
+# Make sentences of 4 words each, moving one word at a time
+sentences = []
+for i in range(4, len(words) + 1):
+    sentences.append(' '.join(words[i - 4: i]))
+
+# Instantiate a Tokenizer, then fit it on the sentences
+tokenizer = kpt.Tokenizer()
+tokenizer.fit_on_texts(sentences)
+
+# Tokenize the sentences
+sequences = tokenizer.texts_to_sequences(sentences)
+print("Sentences: \n {} \n Sequences: \n {}".format(sentences[:5], sequences[:5]))
+
+vocab_size = len(tokenizer.word_counts) + 1
+print("Vocabulary size: ", vocab_size)
+
+# 38. Build your LSTM model
+print("Build your LSTM model")
+print("--------------------------")
+
+# Instantiate a Sequential model
+lstm_model = keras.Sequential()
+
+# Add an Embedding layer with the right parameters
+lstm_model.add(keras.layers.Embedding(input_dim=vocab_size, output_dim=8, input_length=3))
+
+# Add an LSTM layer with 32 units
+lstm_model.add(keras.layers.LSTM(32))
+
+# Add a hidden Dense layer of 32 units and an output layer of vocab_size units with softmax
+lstm_model.add(keras.layers.Dense(32, activation='relu'))
+lstm_model.add(keras.layers.Dense(vocab_size, activation='softmax'))
+
+# Build your model
+lstm_model.build(input_shape=(None, 3))
+
+# Compile your model
+lstm_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Print summary of your model
+print(lstm_model.summary())
+
+# 39. Decode your predictions
+print("Decode your predictions")
+print("--------------------------")
+
+np_sequences = np.array(sequences)
+print("Sequences shape: ", np_sequences.shape)
+
+# One-hot encode the targets
+X = np_sequences[:, :3]
+y = np_sequences[:, 3]
+y = keras.utils.to_categorical(y, num_classes=vocab_size)
+print("np_sequences shape: \n", np_sequences.shape)
+
+np_sequences = np.array(sequences)
+print("Sequences shape post np.array: ", np_sequences.shape)
+
+# compile your model
+lstm_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+history = lstm_model.fit(X, y, epochs=500, verbose=0)
+
+
+# Define a function to predict the next words
+def predict_text(test_text, model=lstm_model):
+    if len(test_text.split()) != 3:
+        print('Input text must contain 3 words')
+        return None
+    # Turn the test_text into a sequence of numbers
+    test_seq = tokenizer.texts_to_sequences([test_text])
+    test_seq = np.array(test_seq)
+
+    # Use the model passed as a parameter to predict the next word
+    word_pred = model.predict(test_seq).argmax(axis=1)[0]
+
+    # Return the word that maps to the prediction
+    return tokenizer.index_word[word_pred]
+
+
+# Predict the next word
+print(predict_text('meet revenge with'))
+
+print(predict_text('the course of'))
+
+print(predict_text('strength of the'))
