@@ -895,3 +895,122 @@ for i in range(0, 21):
 
         # Plot 1st vs 2nd neuron output
         plot()
+
+# 30. Building an autoencoder
+print("Building an autoencoder")
+print("--------------------------")
+
+# Import the MNIST dataset
+emnist = keras.datasets.mnist
+# Load the MNIST dataset
+(mnist_X_train, mnist_y_train), (mnist_X_test, mnist_y_test) = emnist.load_data()
+
+# Normalize the images
+mnist_X_train = mnist_X_train / 255.0
+mnist_X_test = mnist_X_test / 255.0
+
+# Flatten the images
+mnist_X_train = mnist_X_train.reshape(-1, 784)
+mnist_X_test = mnist_X_test.reshape(-1, 784)
+
+# Start with a sequential model
+autoencoder = keras.Sequential()
+
+# Add a dense layer with input the size of the image
+autoencoder.add(keras.layers.Dense(32, input_shape=(784,), activation='relu'))
+
+# Add an output layer with as many neurons as the image
+autoencoder.add(keras.layers.Dense(784, activation='sigmoid'))
+
+# Compile your model
+autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
+
+# Print a summary of the autoencoder model
+autoencoder.summary()
+
+# 31. De-noising like an autoencoder
+print("De-noising like an autoencoder")
+print("--------------------------")
+
+mnist_X_test_noise = np.load("../../data/12.deep_learning/X_test_MNIST_noise.npy")
+mnist_y_test_noise = np.load("../../data/12.deep_learning/y_test_MNIST.npy")
+
+
+# -------------
+def show_encodings(encoded_imgs, number=1):
+    n = 5  # how many digits we will display
+    original = mnist_X_test_noise
+    original = original[np.where(mnist_y_test_noise == number)]
+    encoded_imgs = encoded_imgs[np.where(mnist_y_test_noise == number)]
+    plt.figure(figsize=(20, 4))
+    # plt.title('Original '+str(number)+' vs Encoded representation')
+    for i in range(min(n, len(original))):
+        # display original imgs
+        ax = plt.subplot(2, n, i + 1)
+        plt.imshow(original[i].reshape(28, 28))
+        plt.gray()
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
+        # display encoded imgs
+        ax = plt.subplot(2, n, i + 1 + n)
+        plt.imshow(np.tile(encoded_imgs[i], (32, 1)))
+        plt.gray()
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
+    plt.show()
+
+
+def compare_plot(original, decoded_imgs):
+    n = 4  # How many digits we will display
+    plt.figure(figsize=(20, 4))
+    for i in range(n):
+        # Display original
+        ax = plt.subplot(2, n, i + 1)
+        plt.imshow(original[i].reshape(28, 28))
+        plt.gray()
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
+        # Display reconstruction
+        ax = plt.subplot(2, n, i + 1 + n)
+        plt.imshow(decoded_imgs[i].reshape(28, 28))
+        plt.gray()
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+    plt.title('Noisy vs Decoded images')
+    plt.show()
+
+
+# Build your encoder by using the first lasyer of your autoencoder
+encoder = keras.Sequential()
+# encoder.add(keras.layers.Dense(32, input_shape=(784,), activation='relu'))
+encoder.add(autoencoder.layers[0])
+
+# Encode the noisy images and show the encodings for your favorite number [0-9]
+# Ensure the input data is reshaped correctly
+
+encodings = encoder.predict(mnist_X_test_noise)
+show_encodings(encodings, number=1)
+
+# 32. De-noising like an autoencoder II
+print("De-noising like an autoencoder II")
+print("--------------------------")
+
+decoder_layer = autoencoder.layers[-1]
+decoder = keras.models.Model()
+
+# Predict on the noisy images with your autoencoder
+decoded_imgs = autoencoder.predict(mnist_X_test_noise)
+
+# Plot noisy vs decoded images
+print("Noisy vs Decoded images")
+compare_plot(mnist_X_test_noise, decoded_imgs)
+
+# Predict on the noisy images with your autoencoder
+decoded_imgs = autoencoder.predict(mnist_X_test_noise)
+
+# Plot noisy vs decoded images
+compare_plot(mnist_X_test_noise, decoded_imgs)
+
