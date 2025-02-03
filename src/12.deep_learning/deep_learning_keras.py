@@ -1014,3 +1014,84 @@ decoded_imgs = autoencoder.predict(mnist_X_test_noise)
 # Plot noisy vs decoded images
 compare_plot(mnist_X_test_noise, decoded_imgs)
 
+# 33. Building a CNN model
+print("Building a CNN model")
+print("--------------------------")
+
+cnn_model = keras.Sequential()
+
+# Add a convolutional layer of 32 filters of size 3x3
+cnn_model.add(keras.layers.Conv2D(32, kernel_size=3, activation='relu', input_shape=(28, 28, 1)))
+
+# Add a convolutional layer of 16 filters of size 3x3
+cnn_model.add(keras.layers.Conv2D(16, kernel_size=3, activation='relu'))
+
+# Flatten the previous layer output
+cnn_model.add(keras.layers.Flatten())
+
+# Add as many outputs as classes with softmax activation
+cnn_model.add(keras.layers.Dense(10, activation='softmax'))
+
+# Compile your model
+cnn_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Print summary of your model
+cnn_model.summary()
+
+# 34. Looking at convolutions
+print("Looking at convolutions")
+print("--------------------------")
+
+(mnist_X_train, mnist_y_train), (mnist_X_test, mnist_y_test) = emnist.load_data()
+mnist_X_train = np.reshape(mnist_X_train, [-1, 28, 28, 1])
+mnist_X_test = np.reshape(mnist_X_test, [-1, 28, 28, 1])
+
+cnn_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+cnn_model.fit(mnist_X_train, mnist_y_train, epochs=5, batch_size=32);
+
+first_layer_output = cnn_model.layers[0].output
+
+# Build a model using the model's input and the first layer output
+first_layer_model = keras.models.Model(inputs=cnn_model.layers[0].input, outputs=first_layer_output)
+
+# Use this model to predict on X_test
+activations = first_layer_model.predict(mnist_X_test)
+
+fig, axs = plt.subplots(1, 3, figsize=(16, 8))
+
+# Plot the activations of first digit of X_test for the 15th filter
+axs[0].matshow(activations[0, :, :, 14], cmap='viridis');
+
+# Do the same but for the 18th filter now
+axs[1].matshow(activations[0, :, :, 17], cmap='viridis');
+
+plt.show()
+
+# 35. Preparing your input image
+print("Preparing your input image")
+print("--------------------------")
+
+# Import the data
+img = keras.preprocessing.image.load_img("../../data/12.deep_learning/dog.png", target_size=(224, 224))
+
+# Convert the image to an array
+img_array = keras.preprocessing.image.img_to_array(img)
+
+# Expand the dimensions of the image
+img_expanded = np.expand_dims(img_array, axis=0)
+
+# Preprocess the image
+img_ready = keras.applications.resnet50.preprocess_input(img_expanded)
+
+# 36. Using a real world model
+print("Using a real world model")
+print("--------------------------")
+
+# Instantiate a ResNet50 model with 'imagenet' weights
+resnet_model = keras.applications.resnet50.ResNet50(weights='imagenet')
+
+# Predict with ResNet50 on your already processed img
+preds = resnet_model.predict(img_ready)
+
+# Decode the first three predictions
+print('Predicted:', keras.applications.resnet50.decode_predictions(preds, top=3)[0])
