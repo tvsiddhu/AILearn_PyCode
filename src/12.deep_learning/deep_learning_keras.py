@@ -841,11 +841,57 @@ banknotes_model.summary()
 # Fit the model
 banknotes_model.fit(banknotes_X_train, banknotes_y_train, epochs=20)
 
-# Import keras backend
-import tensorflow as tf
-
 # Input tensor from the 1st layer of the model
 inp = banknotes_model.layers[0].input
 
 # Output tensor from the 1st layer of the model
 out = banknotes_model.layers[0].output
+
+import tensorflow as tf
+
+
+@tf.function
+def inp_out(inp, out):
+    return banknotes_model(inp)
+
+
+# Convert KerasTensor to Tensor
+inp_tensor = tf.convert_to_tensor(banknotes_X_test, dtype=tf.float32)
+out_tensor = tf.convert_to_tensor(banknotes_y_test, dtype=tf.float32)
+result = inp_out(inp_tensor, out_tensor)
+print(result)
+
+# 29. Neural separation
+print("Neural separation")
+print("--------------------------")
+
+for i in range(0, 21):
+    print("Epoch:", i)
+    h = banknotes_model.fit(banknotes_X_train, banknotes_y_train, epochs=1, verbose=0, batch_size=16)
+    if i % 4 == 0:
+        print("Loss at epoch", i, ":", h.history['loss'][0])
+        # Get the output of the first layer
+        layer_output = banknotes_model.layers[0].output
+
+    print("Accuracy:", banknotes_model.evaluate(banknotes_X_test, banknotes_y_test)[1])
+
+
+def plot():
+    fig, ax = plt.subplots()
+    plt.scatter(layer_output[:, 0], layer_output[:, 1], c=banknotes_y_test, edgecolors='none')
+    plt.title('Epoch: {}, Test Accuracy: {:3.1f} %'.format(i + 1, test_accuracy * 100.0))
+    plt.show()
+
+
+for i in range(0, 21):
+    # Train model for 1 epoch
+    h = banknotes_model.fit(banknotes_X_train, banknotes_y_train, batch_size=16, epochs=1, verbose=0)
+    if i % 4 == 0:
+        # Get the output of the first layer
+        layer_output = banknotes_model.layers[0](banknotes_X_test)
+
+        # Evaluate model accuracy for this epoch
+        test_accuracy = banknotes_model.evaluate(banknotes_X_test, banknotes_y_test)[1]
+
+        # Plot 1st vs 2nd neuron output
+        plot()
