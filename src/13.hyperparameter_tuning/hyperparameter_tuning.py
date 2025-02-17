@@ -216,9 +216,6 @@ print('7. Build Grid Search Functions')
 print("--------------------------------------------")
 
 
-# Load libraries
-
-
 # Create the function
 def gbm_grid_search(learn_rate, max_depth):
     # Create the model
@@ -274,3 +271,4 @@ for learn_rate in learn_rate_list:
 
 # Print results
 print(results_list)
+
