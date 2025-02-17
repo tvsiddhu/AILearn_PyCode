@@ -209,3 +209,68 @@ plt.xlabel('Learning Rate')
 plt.ylabel('Accuracy')
 plt.title('Accuracy for different learning rates')
 plt.show()
+
+# 7. Build Grid Search Functions
+print("--------------------------------------------")
+print('7. Build Grid Search Functions')
+print("--------------------------------------------")
+
+
+# Load libraries
+
+
+# Create the function
+def gbm_grid_search(learn_rate, max_depth):
+    # Create the model
+    model = GradientBoostingClassifier(learning_rate=learn_rate, max_depth=max_depth)
+
+    # Use the model to make predictions
+    predictions = model.fit(X_train, y_train).predict(X_test)
+
+    # Return the hyperparameters and score
+    return ([learn_rate, max_depth, accuracy_score(y_test, predictions)])
+
+
+# 8. Iteratively tune multiple hyperparameters
+print("--------------------------------------------")
+print('8. Iteratively tune multiple hyperparameters')
+print("--------------------------------------------")
+
+# Create a list of values for each hyperparameter
+results_list = []
+learn_rate_list = [0.01, 0.1, 0.5]
+max_depth_list = [2, 4, 6]
+
+# Create the for loop
+for learn_rate in learn_rate_list:
+    for max_depth in max_depth_list:
+        results_list.append(gbm_grid_search(learn_rate, max_depth))
+
+# Print results
+print(results_list)
+
+
+# Extend the function to iunclude the subsample parameter
+def gbm_grid_search_extended(learn_rate, max_depth, subsample):
+    # Create the model
+    model = GradientBoostingClassifier(learning_rate=learn_rate, max_depth=max_depth, subsample=subsample)
+
+    # Use the model to make predictions
+    predictions = model.fit(X_train, y_train).predict(X_test)
+
+    # Return the hyperparameters and score
+    return ([learn_rate, max_depth, subsample, accuracy_score(y_test, predictions)])
+
+
+results_list = []
+
+# Create the new list to test
+subsample_list = [0.4, 0.6]
+
+for learn_rate in learn_rate_list:
+    for max_depth in max_depth_list:
+        for subsample in subsample_list:
+            results_list.append(gbm_grid_search_extended(learn_rate, max_depth, subsample))
+
+# Print results
+print(results_list)
