@@ -1,5 +1,7 @@
 # Hyperparameter tuning in Python
 # Load libraries
+from itertools import product
+
 import pandas as pd
 import pydotplus
 from matplotlib import pyplot as plt
@@ -360,3 +362,191 @@ print('Confusion Matrix: \n', confusion_matrix(y_test, predictions))
 predictions_proba = grid_rf_class.best_estimator_.predict_proba(X_test)[:, 1]
 print('ROC-AUC Score: \n', roc_auc_score(y_test, predictions_proba))
 
+# 13. Randomly Sample Hyperparameters
+print("--------------------------------------------")
+print('13. Randomly Sample Hyperparameters')
+print("--------------------------------------------")
+
+# Load libraries
+
+# Create a list of values for the learning_rate hyperparameter
+learn_rate_list = list(np.linspace(0.01, 1.5, 200))
+
+# Create a list of values for the min_samples_leaf hyperparameter
+min_samples_list = list(range(10, 41))
+
+# Combination list
+combinations_list = [list(x) for x in product(learn_rate_list, min_samples_list)]
+
+# Sample hyperparameter combinations for a random search.
+random_combinations_index = np.random.choice(range(0, len(combinations_list)), 250, replace=False)
+combinations_random_chosen = [combinations_list[x] for x in random_combinations_index]
+
+# Print the result
+print(combinations_random_chosen)
+
+# 14. Randomly Search with Random Forest
+print("--------------------------------------------")
+print('14. Randomly Search with Random Forest')
+print("--------------------------------------------")
+
+# Create lists for criterion and max_features
+criterion_list = ['gini', 'entropy']
+max_feature_list = ['auto', 'sqrt', 'log2', None]
+
+# Create a list of values for the max_depth hyperparameter
+max_depth_list = list(range(3, 56))
+
+# Combination list
+combinations_list = [list(x) for x in product(criterion_list, max_feature_list, max_depth_list)]
+
+# Sample hyperparameter combinations for a random search.
+combinations_random_chosen = np.random.choice(range(0, len(combinations_list)), 150)
+
+# Print the result
+print(combinations_random_chosen)
+
+# 15. Visualizing a Random Search
+print("--------------------------------------------")
+print('15. Visualizing a Random Search')
+print("--------------------------------------------")
+
+# Load libraries
+import matplotlib.pyplot as plt
+
+
+def sample_and_visualize_hyperparameters(n_samples):
+    # If asking for all combinations, just return the entire list.
+    if n_samples == len(combinations_list):
+        combinations_randomly_chosen = combinations_list
+    else:
+        combinations_randomly_chosen = []
+        random_combinations_indexed = np.random.choice(range(0, len(combinations_list)), n_samples, replace=False)
+        combinations_randomly_chosen = [combinations_list[x] for x in random_combinations_indexed]
+
+    # Pull out the X and Y to plot
+    rand_y, rand_x = [x[0] for x in combinations_randomly_chosen], [x[1] for x in combinations_randomly_chosen]
+
+    # Plot
+    plt.clf()
+    plt.scatter(rand_y, rand_x, c=['b'] * len(combinations_randomly_chosen))
+    plt.gca().set(xlabel='learn_rate', ylabel='min_samples_leaf', title='Random Search Hyperparameters')
+
+    # plt.gca().set_xlim(x_lims)
+    # plt.gca().set_ylim(y_lims)
+    plt.show()
+
+
+# Confirm how many hyperparameter combinations & print
+
+# Importing this created file since the datacamp environment
+# variable has a totally different count of combinations between the exercises and this can cause confusion
+
+combinations_list = pd.read_csv('../../data/13.hyperparameter_tuning/random_search_combo_list.csv', header=0,
+                                usecols=[1, 2])
+
+combinations_list = combinations_list.values.tolist()
+number_combs = len(combinations_list)
+print(number_combs)
+
+# Sample and visualise specified hyperparameter combinations (50, 500 and 1500 combinations)
+for x in [50, 500, 1500]:
+    sample_and_visualize_hyperparameters(x)
+
+# Sample all the hyperparameter combinations & visualise
+sample_and_visualize_hyperparameters(number_combs)
+
+# 16. Random Search with Scikit Learn - The RandomizedSearchCV Object
+print("--------------------------------------------")
+print('16. Random Search with Scikit Learn - The RandomizedSearchCV Object')
+print("--------------------------------------------")
+
+# Load libraries
+from sklearn.model_selection import RandomizedSearchCV
+
+# Create the parameter grid
+param_grid = {'learning_rate': np.linspace(0.1, 2, 150), 'min_samples_leaf': list(range(20, 65))}
+
+# Create a random search object
+random_GBM_class = RandomizedSearchCV(
+    estimator=GradientBoostingClassifier(),
+    param_distributions=param_grid,
+    n_iter=10,
+    scoring='accuracy',  # Ensure this is 'accuracy' as per the instructions
+    n_jobs=4,
+    cv=5,
+    random_state=1,
+    refit=True,
+    return_train_score=True
+)
+
+# Fit to the training data
+random_GBM_class.fit(X_train, y_train)
+
+# Print the values used for both hyperparameters
+print(random_GBM_class.cv_results_['param_learning_rate'])
+print(random_GBM_class.cv_results_['param_min_samples_leaf'])
+
+# 17. RandomSearchCV in Scikit Learn
+print("--------------------------------------------")
+print('17. RandomSearchCV in Scikit Learn')
+print("--------------------------------------------")
+
+# Create the parameter grid
+param_grid = {"max_depth": list(range(5, 26)), "max_features": ['auto', 'sqrt']}
+
+# Create a random search object
+random_rf_class = RandomizedSearchCV(
+    estimator=RandomForestClassifier(n_estimators=80),
+    param_distributions=param_grid,
+    n_iter=5,
+    scoring='roc_auc',
+    n_jobs=4,
+    cv=3,
+    random_state=1,
+    refit=True,
+    return_train_score=True
+)
+
+# Fit to the training data
+random_rf_class.fit(X_train, y_train)
+
+# Print the values used for both hyperparameters
+print(random_rf_class.cv_results_['param_max_depth'])
+print(random_rf_class.cv_results_['param_max_features'])
+
+# 18. Grid and Random Search Side by Side
+print("--------------------------------------------")
+print('18. Grid and Random Search Side by Side')
+print("--------------------------------------------")
+
+
+def visualize_search(grid_combinations_chosen, random_combinations_chosen):
+    grid_y, grid_x = [x[0] for x in grid_combinations_chosen], [x[1] for x in grid_combinations_chosen]
+    rand_y, rand_x = [x[0] for x in random_combinations_chosen], [x[1] for x in random_combinations_chosen]
+
+    # Plot all together
+    plt.scatter(grid_y + rand_y, grid_x + rand_x, c=['red'] * 300 + ['blue'] * 300)
+    plt.gca().set(xlabel='learn_rate', ylabel='min_samples_leaf', title='Grid and Random Search Hyperparameters')
+    # plt.gca().set_xlim(x_lims)
+    # plt.gca().set_ylim(y_lims)
+    plt.show()
+
+
+# Sample grid coordinates
+grid_combinations_chosen = combinations_list[0:300]
+
+# Print results
+print(grid_combinations_chosen)
+
+# Create a list of sample indexes
+sample_indexes = list(range(0, len(combinations_list)))
+
+# Randomly sample 300 indexes
+random_indexes = np.random.choice(sample_indexes, 300, replace=False)
+
+# Use indexes to create the random sample
+random_combinations_chosen = [combinations_list[index] for index in random_indexes]
+
+# Call the function to produce the visualization
+visualize_search(grid_combinations_chosen, random_combinations_chosen)
