@@ -33,7 +33,7 @@ y = credit_card_df['default payment next month']
 # print(default_of_credit_card_clients.variables)
 
 # Split data into training and test sets
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
@@ -456,9 +456,9 @@ for x in [50, 500, 1500]:
 # Sample all the hyperparameter combinations & visualise
 sample_and_visualize_hyperparameters(number_combs)
 
-# 16. Random Search with Scikit Learn - The RandomizedSearchCV Object
+# 16. Random Search with Scikit-learn - The RandomizedSearchCV Object
 print("--------------------------------------------")
-print('16. Random Search with Scikit Learn - The RandomizedSearchCV Object')
+print('16. Random Search with Scikit-learn - The RandomizedSearchCV Object')
 print("--------------------------------------------")
 
 # Load libraries
@@ -487,9 +487,9 @@ random_GBM_class.fit(X_train, y_train)
 print(random_GBM_class.cv_results_['param_learning_rate'])
 print(random_GBM_class.cv_results_['param_min_samples_leaf'])
 
-# 17. RandomSearchCV in Scikit Learn
+# 17. RandomSearchCV in Scikit-learn
 print("--------------------------------------------")
-print('17. RandomSearchCV in Scikit Learn')
+print('17. RandomSearchCV in Scikit-learn')
 print("--------------------------------------------")
 
 # Create the parameter grid
@@ -550,3 +550,161 @@ random_combinations_chosen = [combinations_list[index] for index in random_index
 
 # Call the function to produce the visualization
 visualize_search(grid_combinations_chosen, random_combinations_chosen)
+
+# 19. Informed Search - Visualizing Coarse to Fine
+print("--------------------------------------------")
+print('19. Informed Search - Visualizing Coarse to Fine')
+print("--------------------------------------------")
+
+# Confirm the size of the combinations_list
+number_combs = len(combinations_list)
+print(number_combs)
+
+
+def visualize_hyperparameter(name):
+    plt.clf()
+    plt.scatter(results_df[name], results_df['accuracy'], c=['blue'] * 500)
+    plt.gca().set(xlabel='{}'.format(name), ylabel='accuracy', title='Accuracy for different {}s'.format(name))
+    plt.gca().set_ylim([0, 100])
+    plt.show()
+
+
+combinations_list = pd.read_csv('../../data/13.hyperparameter_tuning/informed_search_combo_list.csv', header=0,
+                                usecols=[1, 2, 3])
+
+combinations_list = combinations_list.values.tolist()
+
+results_df = pd.read_csv('../../data/13.hyperparameter_tuning/informed_search_hyperparameter_accuracy_result.csv',
+                         header=0, usecols=[1, 2, 3, 4])
+
+# Sort the results_df by accuracy and print the top 10 rows
+print(results_df.sort_values(by='accuracy', ascending=False).head(10))
+
+# Confirm which hyperparameters were used in this search
+print(results_df.columns)
+
+# Call visualize_hyperparameter() with each hyperparameter in turn
+visualize_hyperparameter('learn_rate')
+visualize_hyperparameter('min_samples_leaf')
+visualize_hyperparameter('max_depth')
+
+# 20. Informed Search - Coarse to Fine Iterations
+print("--------------------------------------------")
+print('20. Informed Search - Coarse to Fine Iterations')
+print("--------------------------------------------")
+
+
+def visualize_first():
+    for name in results_df.columns[0:2]:
+        plt.clf()
+        plt.scatter(results_df[name], results_df['accuracy'], c=['blue'] * 500)
+        plt.gca().set(xlabel='{}'.format(name), ylabel='accuracy', title='Accuracy for different {}s'.format(name))
+        plt.gca().set_ylim([0, 100])
+        x_line = 20
+        if name == "learn_rate":
+            x_line = 1
+        plt.axvline(x=x_line, color="red", linewidth=4)
+        plt.show()
+
+
+visualize_first()
+
+# Create some combinations lists & combine
+max_depth_list = list(range(1, 21))
+learn_rate_list = np.linspace(0.001, 1, 50)
+
+results_df2 = pd.read_csv('../../data/13.hyperparameter_tuning/informed_search_hyperparameters_accuracy_2.csv',
+                          header=0, usecols=[1, 2, 3])
+
+
+def visualize_second():
+    for name in results_df2.columns[0:2]:
+        plt.clf()
+        plt.scatter(results_df2[name], results_df2['accuracy'], c=['blue'] * 1000)
+        plt.gca().set(xlabel='{}'.format(name), ylabel='accuracy', title='Accuracy for different {}s'.format(name))
+        plt.gca().set_ylim([0, 100])
+        plt.show()
+
+
+visualize_second()
+
+# 21. Informed Search - Bayesian stats
+print("--------------------------------------------")
+print('21. Informed Search - Bayesian stats')
+print("--------------------------------------------")
+
+# Assign probabilities to variables
+p_unhappy = 0.15
+p_unhappy_close = 0.35
+
+# Probabilities of being unhappy and close to the store
+p_close = 0.07
+
+# Probability unhappy person will close
+p_close_unhappy = p_unhappy_close * p_close / p_unhappy
+print(p_close_unhappy)
+
+# 22. Informed Search - Bayesian Hyperparameter tuning with Hyperopt
+print("--------------------------------------------")
+print('22. Informed Search - Bayesian Hyperparameter tuning with Hyperopt')
+print("--------------------------------------------")
+
+# Load libraries
+from hyperopt import hp, fmin, tpe
+
+# Set up space dictionary with specified hyperparameters
+space = {'max_depth': hp.quniform('max_depth', 2, 10, 2), 'learning_rate': hp.uniform('learning_rate', 0.001, 0.9)}
+
+
+# Set up objective function
+def objective(params):
+    params = {'max_depth': int(params['max_depth']), 'learning_rate': params['learning_rate']}
+    gbm_clf = GradientBoostingClassifier(n_estimators=100, **params)
+    best_score = cross_val_score(gbm_clf, X_train, y_train, scoring='accuracy', cv=2, n_jobs=4).mean()
+    loss = 1 - best_score
+    return loss
+
+
+# Run the algorithm
+best = fmin(fn=objective, space=space, algo=tpe.suggest, max_evals=20, rstate=np.random.default_rng(42))
+print(best)
+
+# 23. Informed Search - Genetic Hyperparameter tuning with TPOT
+print("--------------------------------------------")
+print('23. Informed Search - Genetic Hyperparameter tuning with TPOT')
+print("--------------------------------------------")
+
+# Load libraries
+from tpot import TPOTClassifier
+
+# Assign the values outlined to the inputs
+number_generations = 3
+population_size = 4
+offspring_size = 3
+scoring_function = 'accuracy'
+
+# Create a TPOT classifier
+tpot_clf = TPOTClassifier(generations=number_generations, population_size=population_size,
+                          offspring_size=offspring_size,
+                          scoring=scoring_function, verbosity=2, random_state=42, cv=2)
+
+# Fit the classifier to the training data
+tpot_clf.fit(X_train, y_train)
+
+# Score on the test set
+print(tpot_clf.score(X_test, y_test))
+
+# 24. Informed Search - Analyzing TPOT's stability
+print("--------------------------------------------")
+print('24. Informed Search - Analyzing TPOT stability')
+print("--------------------------------------------")
+
+# Create the tpot classifier
+tpot_clf = TPOTClassifier(generations=2, population_size=4, offspring_size=3, scoring='accuracy', cv=2,
+                          verbosity=2, random_state=42)  # You can use other random states to get different results
+
+# Fit the classifier to the training data
+tpot_clf.fit(X_train, y_train)
+
+# Score on the test set
+print(tpot_clf.score(X_test, y_test))
