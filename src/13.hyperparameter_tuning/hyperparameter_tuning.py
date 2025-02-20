@@ -111,7 +111,7 @@ print('Random Forest Hyperparameters:')
 print(rf_clf_old.get_params())
 
 # Get confusion matrix & accuracy for the rf_clf_old model
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, roc_auc_score
 
 # Predict the test set
 rf_old_predictions = rf_clf_old.predict(X_test)
@@ -271,4 +271,92 @@ for learn_rate in learn_rate_list:
 
 # Print results
 print(results_list)
+
+# 9. GridSearchCV with Scikit Learn
+print("--------------------------------------------")
+print('9. GridSearchCV with Scikit Learn')
+print("--------------------------------------------")
+
+# Load libraries
+from sklearn.model_selection import GridSearchCV
+
+# Create a RandomForestClassifier
+rf_class = RandomForestClassifier(criterion='entropy')
+
+# Create a dictionary of hyperparameters to search
+param_grid = {'max_depth': [2, 4, 8, 15], 'max_features': ['auto', 'sqrt']}
+
+# Create a GridSearchCV object
+grid_rf_class = GridSearchCV(
+    estimator=rf_class,
+    param_grid=param_grid,
+    scoring='roc_auc',  # Ensure this is the correct scoring method
+    n_jobs=4,  # Consider using a specific number of jobs
+    cv=5,  # Ensure the correct number of cross-validation folds
+    refit=True,
+    return_train_score=True)
+
+print(grid_rf_class)
+
+# 10. Exploring the grid search results
+print("--------------------------------------------")
+print('10. Exploring the grid search results')
+print("--------------------------------------------")
+
+# Fit the grid search object to the data
+grid_rf_class.fit(X_train, y_train)
+
+# Get the results of the grid search
+grid_rf_class.predict(X_test)
+
+# Read the cv_results property into a DataFrame & print it out
+cv_results_df = pd.DataFrame(grid_rf_class.cv_results_)
+print(cv_results_df)
+
+# Extract and print the column with a dictionary of hyperparameters used
+column = cv_results_df.loc[:, ['params']]
+print(column)
+
+# Extract and print the row that had the best mean test score
+best_row = cv_results_df[cv_results_df['rank_test_score'] == 1]
+print(best_row)
+
+# 11. Analyzing the best results
+print("--------------------------------------------")
+print('11. Analyzing the best results')
+print("--------------------------------------------")
+
+# Print out the ROC_AUC score from the best-performing square
+best_score = grid_rf_class.best_score_
+print(best_score)
+
+# Create a variable from the row related to the best-performing square
+cv_results_df = pd.DataFrame(grid_rf_class.cv_results_)
+best_row = cv_results_df.loc[[grid_rf_class.best_index_]]
+print(best_row)
+
+# Get the n_estimators parameter from the best-performing square and print
+best_n_estimators = grid_rf_class.best_estimator_.n_estimators
+print(best_n_estimators)
+
+# 12. Using the best results
+print("--------------------------------------------")
+print('12. Using the best results')
+print("--------------------------------------------")
+
+# See what type of object the best_estimator_ property is
+print(type(grid_rf_class.best_estimator_))
+
+# Create an array of predictions directly using the best_estimator_ property
+predictions = grid_rf_class.best_estimator_.predict(X_test)
+
+# Take a look to confirm it worked, this should be an array of 1's and 0's
+print(predictions[0:5])
+
+# Now create a confusion matrix
+print('Confusion Matrix: \n', confusion_matrix(y_test, predictions))
+
+# Get the ROC-AUC score
+predictions_proba = grid_rf_class.best_estimator_.predict_proba(X_test)[:, 1]
+print('ROC-AUC Score: \n', roc_auc_score(y_test, predictions_proba))
 
